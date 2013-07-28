@@ -1,0 +1,3 @@
+content http-nowhere chrome/content/
+
+overlay chrome://browser/content/browser.xul chrome://http-nowhere/content/toolbar-button.xul
