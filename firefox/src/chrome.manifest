@@ -1,4 +1,4 @@
 content http-nowhere chrome/content/
 skin http-nowhere classic/1.0 chrome/skin/
 
-overlay chrome://browser/content/browser.xul chrome://http-nowhere/content/toolbar-button.xul
+overlay chrome://browser/content/browser.xul chrome://http-nowhere/content/button.xul

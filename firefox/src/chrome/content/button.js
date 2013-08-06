@@ -7,7 +7,7 @@ function isOn() {
 }
 
 function updateView() {
-  var button = document.getElementById("http-nowhere-toolbar-button");
+  var button = document.getElementById("http-nowhere-button");
   if (button != null) {
     if (isOn()) {
       button.image = "chrome://http-nowhere/skin/button-on.24.png";
@@ -55,12 +55,12 @@ setTimeout(function() {
     // 1) put the button on the toolbar if not already there
     var navbar = document.getElementById("nav-bar");
     var curSet = navbar.currentSet;
-    if (curSet.indexOf("http-nowhere-toolbar-button") == -1) {
+    if (curSet.indexOf("http-nowhere-button") == -1) {
        // put it just before the urlbar if present
-       var set = curSet.replace(/urlbar-container/, "http-nowhere-toolbar-button,urlbar-container");
-       if (set.indexOf("http-nowhere-toolbar-button") == -1) {
+       var set = curSet.replace(/urlbar-container/, "http-nowhere-button,urlbar-container");
+       if (set.indexOf("http-nowhere-button") == -1) {
          // otherwise, put it on the far right
-         set = curSet + ',http-nowhere-toolbar-button';
+         set = curSet + ',http-nowhere-button';
        }
        navbar.setAttribute('currentset', set);
        navbar.currentSet = set;

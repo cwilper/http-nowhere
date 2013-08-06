@@ -1,18 +1,17 @@
 <?xml version="1.0"?>
-<overlay id="http-nowhere-toolbar-button-overlay"
+<overlay id="http-nowhere-button-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
- <script type="application/x-javascript" src="chrome://http-nowhere/content/toolbar-button.js"/>
+ <script type="application/x-javascript" src="chrome://http-nowhere/content/button.js"/>
 
  <toolbarpalette id="BrowserToolbarPalette">
    <toolbarbutton
-     id="http-nowhere-toolbar-button"
+     id="http-nowhere-button"
      tooltiptext="HTTP-Nowhere Disabled"
      label="HTTP-Nowhere"
      title="HTTP-Nowhere"
      oncommand="toggleState();"
      image="chrome://http-nowhere/skin/button-off.24.png"
      width="36" height="24"
-     insertbefore="urlbar-container"
    />
  </toolbarpalette>
 </overlay>
