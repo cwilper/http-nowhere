@@ -9,8 +9,7 @@
      tooltiptext="HTTP-Nowhere Disabled"
      label="HTTP-Nowhere"
      title="HTTP-Nowhere"
-     oncommand="toggleState();"
-     image="chrome://http-nowhere/skin/button-off.24.png"
+     oncommand="httpNowhere.button.toggleState();" image="chrome://http-nowhere/skin/button-off.24.png"
      width="36" height="24"
    />
  </toolbarpalette>
