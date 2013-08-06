@@ -36,6 +36,21 @@ httpNowhere.button = {
       httpNowhere.button.updateView();
     });
     myListener.register(true);
+
+    // Observe interesting stuff
+    Services.obs.addObserver(httpNowhere.button, "http-on-modify-request", false);
+  },
+
+  observe: function(subject, topic, data) {
+    if (topic == "http-on-modify-request") {
+      var request = subject.QueryInterface(Ci.nsIHttpChannel);
+      if (request.URI.scheme == "http") {
+        // doesnt work yet...how does https-everywhere use it? also only gecko20+
+        request.redirectTo(Services.io.newURI("http://cnn.com/", null, null));
+        //request.cancel(Components.results.NS_ERROR_ABORT);
+        //Services.console.logStringMessage(request.URI.spec);
+      }
+    }
   },
 
   isOn: function() {
