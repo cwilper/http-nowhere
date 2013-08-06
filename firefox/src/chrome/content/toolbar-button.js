@@ -11,12 +11,14 @@ function isOn() {
 
 function updateView() {
   var button = document.getElementById("http-nowhere-toolbar-button");
-  if (isOn()) {
-    button.image = "chrome://http-nowhere/content/button-on.24.png";
-    button.tooltipText = "HTTP-Nowhere Enabled";
-  } else {
-    button.image = "chrome://http-nowhere/content/button-off.24.png";
-    button.tooltipText = "HTTP-Nowhere Disabled";
+  if (button != null) {
+    if (isOn()) {
+      button.image = "chrome://http-nowhere/skin/button-on.24.png";
+      button.tooltipText = "HTTP-Nowhere Enabled";
+    } else {
+      button.image = "chrome://http-nowhere/skin/button-off.24.png";
+      button.tooltipText = "HTTP-Nowhere Disabled";
+    }
   }
 }
 

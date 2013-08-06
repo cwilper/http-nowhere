@@ -10,7 +10,7 @@
      label="HTTP-Nowhere"
      title="HTTP-Nowhere"
      oncommand="toggleState();"
-     image="chrome://http-nowhere/content/button-off.24.png"
+     image="chrome://http-nowhere/skin/button-off.24.png"
      width="36" height="24"
      insertbefore="urlbar-container"
    />
