@@ -1,8 +1,5 @@
 Components.utils.import("resource://gre/modules/Services.jsm");
 
-var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                        .getService(Components.interfaces.nsIPromptService);
-
 function isOn() {
   return Services.prefs.getIntPref("network.proxy.type") == 1 // manual
       && Services.prefs.getCharPref("network.proxy.http") == "localhost"
@@ -71,7 +68,7 @@ setTimeout(function() {
     }
 
     // 2) give a quick one-time usage message
-    prompts.alert(null, "HTTP-Nowhere is now installed", "Just click the lock button in the toolbar to enable or disable it.\n\nWhile enabled, all unencrypted web requests will fail with a proxy error.");
+    Services.prompt.alert(null, "HTTP-Nowhere is now installed", "Just click the lock button in the toolbar to enable or disable it.\n\nWhile enabled, all unencrypted web requests will fail with a proxy error.");
     Services.prefs.setBoolPref("extensions.http_nowhere.ranonce", true);
   }
   updateView();
@@ -81,9 +78,7 @@ setTimeout(function() {
 function PrefListener(branch_name, callback) {
   // Keeping a reference to the observed preference branch or it will get
   // garbage collected.
-  var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-    .getService(Components.interfaces.nsIPrefService);
-  this._branch = prefService.getBranch(branch_name);
+  this._branch = Services.prefs.getBranch(branch_name);
   this._branch.QueryInterface(Components.interfaces.nsIPrefBranch2);
   this._callback = callback;
 }
