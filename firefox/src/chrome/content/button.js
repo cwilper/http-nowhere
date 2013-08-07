@@ -4,6 +4,13 @@ if ("undefined" === typeof(httpNowhere)) var httpNowhere = {};
 
 httpNowhere.button = {
 
+  recentlyBlocked: new Array(),
+
+  clearRecentList: function() {
+    httpNowhere.button.recentlyBlocked = new Array();
+    httpNowhere.button.updateView();
+  },
+
   init: function() {
     // Add the button, update the view, and show the installed message, if needed
     setTimeout(function() {
@@ -48,8 +55,19 @@ httpNowhere.button = {
           }
         }
         request.cancel(Components.results.NS_ERROR_ABORT);
-        Services.console.logStringMessage("HTTP Nowhere Blocked " + request.URI.spec);
+        httpNowhere.button.notifyBlocked(request.URI.spec);
       }
+    }
+  },
+
+  notifyBlocked: function(url) {
+    httpNowhere.button.recentlyBlocked.push(url);
+    if (httpNowhere.button.recentlyBlocked.length > 20) {
+      httpNowhere.button.recentlyBlocked.pop();
+    }
+    var notifyImage = "chrome://http-nowhere/skin/button-notify.png";
+    if (button.image != notifyImage) {
+      httpNowhere.button.updateView();
     }
   },
 
@@ -73,6 +91,17 @@ httpNowhere.button = {
         button.tooltipText = "HTTP Nowhere (Disabled)";
         toggle.image = onImage;
         toggle.label = "Block unencrypted web traffic";
+      }
+      var recentlyBlocked = document.getElementById("http-nowhere-recently-blocked");
+      recentlyBlocked.label = "Recently blocked (" + httpNowhere.button.recentlyBlocked.length + ")";
+      var recentlyBlockedPopup = document.getElementById("http-nowhere-recently-blocked-popup");
+      while (recentlyBlockedPopup.firstChild.tagName != "menuseparator") {
+        recentlyBlockedPopup.removeChild(recentlyBlockedPopup.firstChild);
+      }
+      for (var i = 0; i < httpNowhere.button.recentlyBlocked.length; i++) {
+        var menuitem = document.createElement("menuitem");
+        menuitem.setAttribute('label', httpNowhere.button.recentlyBlocked[i]);
+        recentlyBlockedPopup.insertBefore(menuitem, recentlyBlockedPopup.firstChild);
       }
     }
   },

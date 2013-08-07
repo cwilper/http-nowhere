@@ -12,11 +12,10 @@
         type="menu">
       <menupopup>
         <menuitem id="http-nowhere-toggle" command="http-nowhere-button-toggleState"/>
-        <menu label="Recently blocked">
-          <menupopup>
-            <menuitem label="example.com"/>
+        <menu id="http-nowhere-recently-blocked" label="Recently blocked">
+          <menupopup id="http-nowhere-recently-blocked-popup">
             <menuseparator/>
-            <menuitem label="Clear list"/>
+            <menuitem label="Clear list" command="http-nowhere-button-clearRecentList"/>
           </menupopup>
         </menu>
       </menupopup>
@@ -25,5 +24,7 @@
   <commandset>
     <command id="http-nowhere-button-toggleState"
       oncommand="httpNowhere.button.toggleState();" />
+    <command id="http-nowhere-button-clearRecentList"
+      oncommand="httpNowhere.button.clearRecentList();" />
   </commandset>
 </overlay>
