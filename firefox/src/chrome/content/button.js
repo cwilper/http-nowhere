@@ -44,11 +44,20 @@ httpNowhere.button = {
   observe: function(subject, topic, data) {
     if (topic == "http-on-modify-request") {
       var request = subject.QueryInterface(Ci.nsIHttpChannel);
-      if (request.URI.scheme == "http") {
-        // doesnt work yet...how does https-everywhere use it? also only gecko20+
-        request.redirectTo(Services.io.newURI("http://cnn.com/", null, null));
-        //request.cancel(Components.results.NS_ERROR_ABORT);
-        //Services.console.logStringMessage(request.URI.spec);
+      if (request.URI.scheme == "http" && request.URI.host != 'localhost') {
+        var button = document.getElementById("http-nowhere-button");
+        if (button != null) {
+          var notifyURL = "chrome://http-nowhere/skin/button-notify.24.png";
+          var onURL = "chrome://http-nowhere/skin/button-on.24.png";
+          if (button.image != notifyURL) {
+            button.image = notifyURL;
+            setTimeout(function() {
+              button.image = onURL;
+            }, 500);
+          }
+        }
+        request.cancel(Components.results.NS_ERROR_ABORT);
+        Services.console.logStringMessage("HTTP-Nowhere Blocked " + request.URI.spec);
       }
     }
   },

@@ -16,7 +16,7 @@
 
     <em:name>HTTP-Nowhere</em:name>
     <em:description>A button to temporarily disable unencrypted browsing.</em:description>
-    <em:iconURL>chrome://http-nowhere/skin/button-on.svg</em:iconURL>
+    <em:iconURL>chrome://http-nowhere/skin/button-on.64.png</em:iconURL>
     <em:creator>Chris Wilper</em:creator>
     <em:homepageURL>https://github.com/cwilper/http-nowhere</em:homepageURL>
   </Description>
