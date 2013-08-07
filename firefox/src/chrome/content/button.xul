@@ -1,16 +1,30 @@
 <?xml version="1.0"?>
 <overlay id="http-nowhere-button-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
- <script type="application/x-javascript" src="chrome://http-nowhere/content/button.js"/>
+  <script type="application/x-javascript" src="chrome://http-nowhere/content/button.js"/>
 
- <toolbarpalette id="BrowserToolbarPalette">
-   <toolbarbutton
-     id="http-nowhere-button"
-     tooltiptext="HTTP-Nowhere Disabled"
-     label="HTTP-Nowhere"
-     title="HTTP-Nowhere"
-     oncommand="httpNowhere.button.toggleState();" image="chrome://http-nowhere/skin/button-off.24.png"
-     width="36" height="24"
-   />
- </toolbarpalette>
+  <toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton
+        id="http-nowhere-button"
+        tooltiptext="HTTP-Nowhere Disabled"
+        label="HTTP-Nowhere"
+        title="HTTP-Nowhere"
+        oncommand="httpNowhere.button.toggleState();"
+        type="menu">
+      <menupopup>
+        <menuitem id="http-nowhere-toggle" command="http-nowhere-button-toggleState"/>
+        <menu label="Recently blocked">
+          <menupopup>
+            <menuitem label="example.com"/>
+            <menuseparator/>
+            <menuitem label="Clear list"/>
+          </menupopup>
+        </menu>
+      </menupopup>
+    </toolbarbutton>
+  </toolbarpalette>
+  <commandset>
+    <command id="http-nowhere-button-toggleState"
+      oncommand="httpNowhere.button.toggleState();" />
+  </commandset>
 </overlay>

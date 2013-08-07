@@ -39,10 +39,9 @@ httpNowhere.button = {
       if (request.URI.scheme == "http" && request.URI.host != 'localhost') {
         var button = document.getElementById("http-nowhere-button");
         if (button != null) {
-          var notifyURL = "chrome://http-nowhere/skin/button-notify.24.png";
-          var onURL = "chrome://http-nowhere/skin/button-on.24.png";
-          if (button.image != notifyURL) {
-            button.image = notifyURL;
+          var notifyImage = "chrome://http-nowhere/skin/button-notify.png";
+          if (button.image != notifyImage) {
+            button.image = notifyImage;
             setTimeout(function() {
               httpNowhere.button.updateView();
             }, 500);
@@ -61,12 +60,19 @@ httpNowhere.button = {
   updateView: function() {
     var button = document.getElementById("http-nowhere-button");
     if (button != null) {
+      var toggle = document.getElementById("http-nowhere-toggle");
+      var onImage = "chrome://http-nowhere/skin/button-on.png";
+      var offImage = "chrome://http-nowhere/skin/button-off.png";
       if (httpNowhere.button.isOn()) {
-        button.image = "chrome://http-nowhere/skin/button-on.24.png";
-        button.tooltipText = "HTTP-Nowhere Enabled";
+        button.image = onImage;
+        button.tooltipText = "HTTP Nowhere (Enabled)";
+        toggle.image = offImage;
+        toggle.label = "Allow unencrypted web traffic";
       } else {
-        button.image = "chrome://http-nowhere/skin/button-off.24.png";
-        button.tooltipText = "HTTP-Nowhere Disabled";
+        button.image = offImage;
+        button.tooltipText = "HTTP Nowhere (Disabled)";
+        toggle.image = onImage;
+        toggle.label = "Block unencrypted web traffic";
       }
     }
   },
