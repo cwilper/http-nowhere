@@ -23,7 +23,7 @@ httpNowhere.button = {
            document.persist('nav-bar', 'currentset');
         }
         // give a quick one-time usage message
-        Services.prompt.alert(null, "HTTP-Nowhere is now installed", "Click the lock button in the toolbar to enable or disable it.\n\nWhile enabled, unencrypted web requests will fail.");
+        Services.prompt.alert(null, "HTTP Nowhere is now installed", "Click the lock button in the toolbar to enable or disable it.\n\nWhile enabled, unencrypted web requests will fail.");
         Services.prefs.setBoolPref("extensions.http_nowhere.ranonce", true);
       }
       httpNowhere.button.updateView();
@@ -48,7 +48,7 @@ httpNowhere.button = {
           }
         }
         request.cancel(Components.results.NS_ERROR_ABORT);
-        Services.console.logStringMessage("HTTP-Nowhere Blocked " + request.URI.spec);
+        Services.console.logStringMessage("HTTP Nowhere Blocked " + request.URI.spec);
       }
     }
   },

@@ -6,9 +6,8 @@
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton
         id="http-nowhere-button"
-        tooltiptext="HTTP-Nowhere Disabled"
-        label="HTTP-Nowhere"
-        title="HTTP-Nowhere"
+        label="HTTP Nowhere"
+        title="HTTP Nowhere"
         oncommand="httpNowhere.button.toggleState();"
         type="menu">
       <menupopup>
