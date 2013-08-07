@@ -15,7 +15,7 @@
     </em:targetApplication>
 
     <em:name>HTTP Nowhere</em:name>
-    <em:description>A button to block unencrypted web traffic.</em:description>
+    <em:description>Blocks unencrypted web traffic for added security.</em:description>
     <em:iconURL>chrome://http-nowhere/skin/icon.svg</em:iconURL>
     <em:creator>Chris Wilper</em:creator>
     <em:homepageURL>https://github.com/cwilper/http-nowhere</em:homepageURL>
