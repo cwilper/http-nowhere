@@ -1,4 +1,5 @@
 Components.utils.import("resource://gre/modules/Services.jsm");
+Components.utils.import("chrome://http-nowhere/content/prefs.js");
 
 if ("undefined" === typeof(httpNowhere)) var httpNowhere = {};
 
@@ -14,7 +15,7 @@ httpNowhere.button = {
   init: function() {
     // Add the button, update the view, and show the installed message, if needed
     setTimeout(function() {
-      if (!Services.prefs.getBoolPref("extensions.http_nowhere.ranonce")) {
+      if (httpNowhere.prefs.isFirstRun()) {
         // put the button on the toolbar if not already there
         var navbar = document.getElementById("nav-bar");
         var curSet = navbar.currentSet;
@@ -31,7 +32,7 @@ httpNowhere.button = {
         }
         // give a quick one-time usage message
         Services.prompt.alert(null, "HTTP Nowhere is now installed", "Click the lock button in the toolbar to enable or disable it.\n\nWhile enabled, unencrypted web requests will fail.");
-        Services.prefs.setBoolPref("extensions.http_nowhere.ranonce", true);
+        httpNowhere.prefs.setFirstRun(false);
       }
       httpNowhere.button.updateView();
     }, 500);
@@ -41,7 +42,7 @@ httpNowhere.button = {
   },
 
   observe: function(subject, topic, data) {
-    if (topic == "http-on-modify-request" && httpNowhere.button.isOn()) {
+    if (topic == "http-on-modify-request" && httpNowhere.prefs.isEnabled()) {
       var request = subject.QueryInterface(Ci.nsIHttpChannel);
       if (request.URI.scheme == "http" && request.URI.host != 'localhost') {
         var button = document.getElementById("http-nowhere-button");
@@ -71,17 +72,13 @@ httpNowhere.button = {
     }
   },
 
-  isOn: function() {
-    return Services.prefs.getBoolPref("extensions.http_nowhere.enabled");
-  },
-
   updateView: function() {
     var button = document.getElementById("http-nowhere-button");
     if (button != null) {
       var toggle = document.getElementById("http-nowhere-toggle");
       var onImage = "chrome://http-nowhere/skin/button-on.png";
       var offImage = "chrome://http-nowhere/skin/button-off.png";
-      if (httpNowhere.button.isOn()) {
+      if (httpNowhere.prefs.isEnabled()) {
         button.image = onImage;
         button.tooltipText = "HTTP Nowhere (Enabled)";
         toggle.image = offImage;
@@ -107,11 +104,7 @@ httpNowhere.button = {
   },
 
   toggleState: function() {
-    if (httpNowhere.button.isOn()) {
-      Services.prefs.setBoolPref("extensions.http_nowhere.enabled", false);
-    } else {
-      Services.prefs.setBoolPref("extensions.http_nowhere.enabled", true);
-    }
+    httpNowhere.prefs.setEnabled(!httpNowhere.prefs.isEnabled());
     httpNowhere.button.updateView();
   },
 }
