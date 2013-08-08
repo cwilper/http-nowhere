@@ -1,5 +1,6 @@
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("chrome://http-nowhere/content/prefs.js");
+Components.utils.import("chrome://http-nowhere/content/recent.js");
 
 if ("undefined" === typeof(httpNowhere)) var httpNowhere = {};
 
@@ -45,9 +46,10 @@ httpNowhere.button = {
     if (topic == "http-on-modify-request" && httpNowhere.prefs.isEnabled()) {
       var request = subject.QueryInterface(Ci.nsIHttpChannel);
       if (request.URI.scheme == "http" && request.URI.host != 'localhost') {
+        var notifyImage = "chrome://http-nowhere/skin/button-notify.png";
+        // signal that a block has occurred by briefly changing the button
         var button = document.getElementById("http-nowhere-button");
         if (button != null) {
-          var notifyImage = "chrome://http-nowhere/skin/button-notify.png";
           if (button.image != notifyImage) {
             button.image = notifyImage;
             setTimeout(function() {
@@ -55,20 +57,20 @@ httpNowhere.button = {
             }, 500);
           }
         }
+        // abort the request
         request.cancel(Components.results.NS_ERROR_ABORT);
-        httpNowhere.button.notifyBlocked(request.URI.spec);
+        // update the recent list
+        httpNowhere.recent.addURI(request.URI);
+        // TODO: remove...this is the old way
+        httpNowhere.button.recentlyBlocked.push(request.URI.spec);
+        if (httpNowhere.button.recentlyBlocked.length > 20) {
+          httpNowhere.button.recentlyBlocked.pop();
+        }
+        // TODO: don't do this now...do it lazily on popup
+        if (button.image != notifyImage) {
+          httpNowhere.button.updateView();
+        }
       }
-    }
-  },
-
-  notifyBlocked: function(url) {
-    httpNowhere.button.recentlyBlocked.push(url);
-    if (httpNowhere.button.recentlyBlocked.length > 20) {
-      httpNowhere.button.recentlyBlocked.pop();
-    }
-    var notifyImage = "chrome://http-nowhere/skin/button-notify.png";
-    if (button.image != notifyImage) {
-      httpNowhere.button.updateView();
     }
   },
 

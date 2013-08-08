@@ -22,5 +22,13 @@ httpNowhere.prefs = {
 
   setFirstRun: function(value) {
     return httpNowhere.prefs.branch.setBoolPref("firstRun", value);
+  },
+
+  getMaxRecentlyBlockedHosts: function() {
+    return httpNowhere.prefs.branch.getIntPref("maxRecentlyBlockedHosts");
+  },
+
+  getMaxRecentlyBlockedURLsPerHost: function() {
+    return httpNowhere.prefs.branch.getIntPref("maxRecentlyBlockedURLsPerHost");
   }
 }
