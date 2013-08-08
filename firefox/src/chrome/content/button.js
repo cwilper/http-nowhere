@@ -85,15 +85,15 @@ httpNowhere.button = {
         button.image = onImage;
         button.tooltipText = "HTTP Nowhere (Enabled)";
         toggle.image = offImage;
-        toggle.label = "Allow unencrypted web traffic";
+        toggle.label = "Disable HTTP Nowhere";
       } else {
         button.image = offImage;
         button.tooltipText = "HTTP Nowhere (Disabled)";
         toggle.image = onImage;
-        toggle.label = "Block unencrypted web traffic";
+        toggle.label = "Enable HTTP Nowhere";
       }
       var recentlyBlocked = document.getElementById("http-nowhere-recently-blocked");
-      recentlyBlocked.label = "Recently blocked (" + httpNowhere.button.recentlyBlocked.length + ")";
+      recentlyBlocked.label = "Recently Blocked (" + httpNowhere.button.recentlyBlocked.length + ")";
       var recentlyBlockedPopup = document.getElementById("http-nowhere-recently-blocked-popup");
       while (recentlyBlockedPopup.firstChild.tagName != "menuseparator") {
         recentlyBlockedPopup.removeChild(recentlyBlockedPopup.firstChild);
