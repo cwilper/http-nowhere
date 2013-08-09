@@ -1,0 +1,37 @@
+#http-nowhere-button {
+  -moz-binding: url("chrome://http-nowhere/content/button.binding.xml#http-nowhere-binding");
+  -moz-box-orient: horizontal;
+}
+
+#http-nowhere-button > .http-nowhere-button {
+  list-style-image: url("chrome://http-nowhere/skin/button-on.png");
+}
+
+#http-nowhere-button[status="blocking"] > .http-nowhere-button {
+  list-style-image: url("chrome://http-nowhere/skin/button-blocking.png");
+}
+
+#http-nowhere-button[status="disabled"] > .http-nowhere-button {
+  list-style-image: url("chrome://http-nowhere/skin/button-off.png");
+}
+
+#http-nowhere-button-badge {
+  margin: 3px -12px 0 -8px;
+  display: block;
+  -moz-box-sizing: border-box;
+}
+
+#http-nowhere-button-badge-label {
+  -moz-box-sizing: border-box;
+  font-size: 10px;
+  color: #000;
+  background-color: yellow;
+  border-width: 1px;
+  border-style: solid;
+  padding: 1px 1px 1px 1px;
+  visibility: hidden;
+}
+
+#http-nowhere-button:not([badgeLabel=""]) #http-nowhere-button-badge-label {
+  visibility: visible;
+}

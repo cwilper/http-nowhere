@@ -39,20 +39,19 @@ httpNowhere.button = {
     if (topic == "http-on-modify-request" && httpNowhere.prefs.isEnabled()) {
       var request = subject.QueryInterface(Ci.nsIHttpChannel);
       if (request.URI.scheme == "http" && request.URI.host != 'localhost') {
-        var blockingImage = "chrome://http-nowhere/skin/button-blocking.png";
-        // signal that a block has occurred by briefly changing the button
+        // signal that a block has occurred by briefly changing the badge
         var button = document.getElementById("http-nowhere-button");
         if (button != null) {
-          if (button.image != blockingImage) {
-            button.image = blockingImage;
+          if (button.getAttribute('status') != 'blocking') {
+            button.setAttribute('status', 'blocking');
             setTimeout(function() {
               httpNowhere.button.updateButtonAppearance();
-            }, 400);
+            }, 500);
           }
         }
         // abort the request
         request.cancel(Components.results.NS_ERROR_ABORT);
-        // update the recent list
+        // update the recent list 
         httpNowhere.recent.addURI(request.URI);
       }
     }
@@ -61,19 +60,17 @@ httpNowhere.button = {
   updateButtonAppearance: function() {
     var button = document.getElementById("http-nowhere-button");
     if (button != null) {
-      // TODO: get urls from dtd
-      var onImage = "chrome://http-nowhere/skin/button-on.png";
-      var blockedImage = "chrome://http-nowhere/skin/button-blocked-19.png";
-      var offImage = "chrome://http-nowhere/skin/button-off.png";
       if (httpNowhere.prefs.isEnabled()) {
+        button.setAttribute('status', 'enabled');
         if (httpNowhere.recent.blockCount == 0) {
-          button.image = onImage;
+          button.setAttribute('badgeLabel', '');
         } else {
-          button.image = blockedImage;
+          button.setAttribute('badgeLabel', httpNowhere.recent.blockCount);
         }
         button.tooltipText = "HTTP Nowhere (Enabled)";
       } else {
-        button.image = offImage;
+        button.setAttribute('status', 'disabled');
+        button.setAttribute('badgeLabel', '');
         button.tooltipText = "HTTP Nowhere (Disabled)";
       }
     }
