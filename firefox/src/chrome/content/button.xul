@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://http-nowhere/skin/style.css" type="text/css"?>
 
-<overlay id="http-nowhere-button-overlay"
+<overlay id="httpNowhere-button-overlay"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script
       type="application/x-javascript"
@@ -9,29 +9,32 @@
 
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton
-        id="http-nowhere-button"
+        id="httpNowhere-button"
+        class="httpNowhere-button"
+        type="menu"
         label="HTTP Nowhere"
         title="HTTP Nowhere"
-        type="menu"
-        badgeLabel="">
+        image="chrome://http-nowhere/skin/button-on.png"
+        badgeLabel=""
+        status="disabled">
       <menupopup onpopupshowing="httpNowhere.button.updateTopMenu();">
         <menuitem
-            id="http-nowhere-toggle"
+            id="httpNowhere-toggle"
             class="menuitem-iconic"
-            command="http-nowhere-command-toggle"
-            key="http-nowhere-key-toggle"/>
+            command="httpNowhere-command-toggle"
+            key="httpNowhere-key-toggle"/>
         <menuseparator/>
         <menu
-            id="http-nowhere-recently-blocked"
+            id="httpNowhere-recently-blocked"
             class="menu-iconic"
             image="chrome://http-nowhere/skin/recent.png">
           <menupopup
-              id="http-nowhere-recently-blocked-popup"
+              id="httpNowhere-recently-blocked-popup"
               onpopupshowing="httpNowhere.button.updateRecentMenu();">
             <menuseparator/>
             <menuitem
                 label="Clear Recent"
-                command="http-nowhere-command-clear"/>
+                command="httpNowhere-command-clear"/>
           </menupopup>
         </menu>
         <menuitem
@@ -44,16 +47,16 @@
 
   <commandset>
     <command
-        id="http-nowhere-command-toggle"
+        id="httpNowhere-command-toggle"
         oncommand="httpNowhere.button.toggle();"/>
     <command
-        id="http-nowhere-command-clear"
+        id="httpNowhere-command-clear"
         oncommand="httpNowhere.button.clearRecent();"/>
   </commandset>
 
   <keyset>
     <key
-        id="http-nowhere-key-toggle"
+        id="httpNowhere-key-toggle"
         key="z"
         modifiers="control shift"
         oncommand="httpNowhere.button.toggle();"/>

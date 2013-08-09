@@ -1,27 +1,27 @@
-#http-nowhere-button {
-  -moz-binding: url("chrome://http-nowhere/content/button.binding.xml#http-nowhere-binding");
+#httpNowhere-button {
+  -moz-binding: url("chrome://http-nowhere/content/button.binding.xml#httpNowhere-binding");
   -moz-box-orient: horizontal;
 }
 
-#http-nowhere-button > .http-nowhere-button {
+#httpNowhere-button > .httpNowhere-button {
   list-style-image: url("chrome://http-nowhere/skin/button-on.png");
 }
 
-#http-nowhere-button[status="blocking"] > .http-nowhere-button {
+#httpNowhere-button[status="blocking"] > .httpNowhere-button {
   list-style-image: url("chrome://http-nowhere/skin/button-blocking.png");
 }
 
-#http-nowhere-button[status="disabled"] > .http-nowhere-button {
+#httpNowhere-button[status="disabled"] > .httpNowhere-button {
   list-style-image: url("chrome://http-nowhere/skin/button-off.png");
 }
 
-#http-nowhere-button-badge {
+#httpNowhere-button-badge {
   margin: 3px -12px 0 -8px;
   display: block;
   -moz-box-sizing: border-box;
 }
 
-#http-nowhere-button-badge-label {
+#httpNowhere-button-badge-label {
   -moz-box-sizing: border-box;
   font-size: 10px;
   color: #000;
@@ -32,6 +32,6 @@
   visibility: hidden;
 }
 
-#http-nowhere-button:not([badgeLabel=""]) #http-nowhere-button-badge-label {
+#httpNowhere-button:not([badgeLabel=""]) #httpNowhere-button-badge-label {
   visibility: visible;
 }

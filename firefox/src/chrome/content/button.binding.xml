@@ -2,15 +2,18 @@
 <bindings xmlns="http://www.mozilla.org/xbl"
     xmlns:xbl="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <binding id="http-nowhere-binding">
+  <binding id="httpNowhere-binding">
     <content>
-      <xul:stack id="http-nowhere-button-badge">
+      <xul:stack id="httpNowhere-button-badge">
         <xul:label
-            id="http-nowhere-button-badge-label"
+            id="httpNowhere-button-badge-label"
             xbl:inherits="value=badgeLabel"/>
       </xul:stack>
-      <xul:toolbarbutton class="http-nowhere-button" flex="1" allowevents="true"
-          xbl:inherits="type,image,label">
+      <xul:toolbarbutton
+          class="httpNowhere-button"
+          flex="1"
+          allowevents="true"
+          xbl:inherits="type,label">
         <children includes="menupopup"/>
       </xul:toolbarbutton>
     </content>

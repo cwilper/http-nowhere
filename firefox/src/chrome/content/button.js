@@ -13,12 +13,12 @@ httpNowhere.button = {
         // put the button on the toolbar if not already there
         var navbar = document.getElementById("nav-bar");
         var curSet = navbar.currentSet;
-        if (curSet.indexOf("http-nowhere-button") == -1) {
+        if (curSet.indexOf("httpNowhere-button") == -1) {
            // put it just before the urlbar if present
-           var set = curSet.replace(/urlbar-container/, "http-nowhere-button,urlbar-container");
-           if (set.indexOf("http-nowhere-button") == -1) {
+           var set = curSet.replace(/urlbar-container/, "httpNowhere-button,urlbar-container");
+           if (set.indexOf("httpNowhere-button") == -1) {
              // otherwise, put it on the far right
-             set = curSet + ',http-nowhere-button';
+             set = curSet + ',httpNowhere-button';
            }
            navbar.setAttribute('currentset', set);
            navbar.currentSet = set;
@@ -40,7 +40,7 @@ httpNowhere.button = {
       var request = subject.QueryInterface(Ci.nsIHttpChannel);
       if (request.URI.scheme == "http" && request.URI.host != 'localhost') {
         // signal that a block has occurred by briefly changing the badge
-        var button = document.getElementById("http-nowhere-button");
+        var button = document.getElementById("httpNowhere-button");
         if (button != null) {
           if (button.getAttribute('status') != 'blocking') {
             button.setAttribute('status', 'blocking');
@@ -58,7 +58,7 @@ httpNowhere.button = {
   },
 
   updateButtonAppearance: function() {
-    var button = document.getElementById("http-nowhere-button");
+    var button = document.getElementById("httpNowhere-button");
     if (button != null) {
       if (httpNowhere.prefs.isEnabled()) {
         button.setAttribute('status', 'enabled');
@@ -80,7 +80,7 @@ httpNowhere.button = {
     // TODO: get urls from dtd
     var onImage = "chrome://http-nowhere/skin/button-on.png";
     var offImage = "chrome://http-nowhere/skin/button-off.png";
-    var toggle = document.getElementById("http-nowhere-toggle");
+    var toggle = document.getElementById("httpNowhere-toggle");
     if (httpNowhere.prefs.isEnabled()) {
       toggle.image = offImage;
       toggle.label = "Disable HTTP Nowhere";
@@ -89,12 +89,12 @@ httpNowhere.button = {
       toggle.label = "Enable HTTP Nowhere";
     }
 
-    var recentlyBlocked = document.getElementById("http-nowhere-recently-blocked");
+    var recentlyBlocked = document.getElementById("httpNowhere-recently-blocked");
     recentlyBlocked.label = "Recent Blocks (" + httpNowhere.recent.blockCount + ")";
   },
 
   updateRecentMenu: function() {
-    var recentlyBlockedPopup = document.getElementById("http-nowhere-recently-blocked-popup");
+    var recentlyBlockedPopup = document.getElementById("httpNowhere-recently-blocked-popup");
     while (recentlyBlockedPopup.firstChild.tagName != "menuseparator") {
       recentlyBlockedPopup.removeChild(recentlyBlockedPopup.firstChild);
     }
