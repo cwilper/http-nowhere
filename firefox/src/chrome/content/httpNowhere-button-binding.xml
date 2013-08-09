@@ -2,7 +2,7 @@
 <bindings xmlns="http://www.mozilla.org/xbl"
     xmlns:xbl="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <binding id="httpNowhere-binding">
+  <binding id="httpNowhere-button-binding">
     <content>
       <xul:stack id="httpNowhere-button-badge">
         <xul:label

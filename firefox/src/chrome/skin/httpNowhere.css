@@ -1,18 +1,17 @@
 #httpNowhere-button {
-  -moz-binding: url("chrome://http-nowhere/content/button.binding.xml#httpNowhere-binding");
-  -moz-box-orient: horizontal;
+  -moz-binding: url("chrome://http-nowhere/content/httpNowhere-button-binding.xml#httpNowhere-button-binding");
 }
 
 #httpNowhere-button > .httpNowhere-button {
-  list-style-image: url("chrome://http-nowhere/skin/button-on.png");
+  list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-enabled.png");
 }
 
 #httpNowhere-button[status="blocking"] > .httpNowhere-button {
-  list-style-image: url("chrome://http-nowhere/skin/button-blocking.png");
+  list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-blocking.png");
 }
 
 #httpNowhere-button[status="disabled"] > .httpNowhere-button {
-  list-style-image: url("chrome://http-nowhere/skin/button-off.png");
+  list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-disabled.png");
 }
 
 #httpNowhere-button-badge {

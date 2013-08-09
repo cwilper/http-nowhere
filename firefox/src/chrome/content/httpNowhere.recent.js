@@ -1,7 +1,8 @@
 EXPORTED_SYMBOLS = ["httpNowhere"];
 
 Components.utils.import("resource://gre/modules/Services.jsm");
-Components.utils.import("chrome://http-nowhere/content/prefs.js");
+
+Components.utils.import("chrome://http-nowhere/content/httpNowhere.prefs.js");
 
 if ("undefined" === typeof(httpNowhere)) var httpNowhere = {};
 
@@ -68,5 +69,5 @@ httpNowhere.recent = {
     return Object.keys(info).sort(function(a, b) {
       return info[a].lastBlockedDate - info[b].lastBlockedDate;
     });
-  },
-}
+  }
+};

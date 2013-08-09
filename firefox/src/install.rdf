@@ -16,7 +16,7 @@
 
     <em:name>HTTP Nowhere</em:name>
     <em:description>Blocks unencrypted web traffic for added security.</em:description>
-    <em:iconURL>chrome://http-nowhere/skin/icon.svg</em:iconURL>
+    <em:iconURL>chrome://http-nowhere/skin/httpNowhere-icon.svg</em:iconURL>
     <em:creator>Chris Wilper</em:creator>
     <em:homepageURL>https://github.com/cwilper/http-nowhere</em:homepageURL>
   </Description>

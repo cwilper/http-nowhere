@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://http-nowhere/skin/style.css" type="text/css"?>
+<?xml-stylesheet href="chrome://http-nowhere/skin/httpNowhere.css" type="text/css"?>
 
 <overlay id="httpNowhere-button-overlay"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script
       type="application/x-javascript"
-      src="chrome://http-nowhere/content/button.js"/>
+      src="chrome://http-nowhere/content/httpNowhere.js"/>
 
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton
@@ -14,20 +14,20 @@
         type="menu"
         label="HTTP Nowhere"
         title="HTTP Nowhere"
-        image="chrome://http-nowhere/skin/button-on.png"
+        image="chrome://http-nowhere/skin/httpNowhere-button-enabled.png"
         badgeLabel=""
         status="disabled">
       <menupopup onpopupshowing="httpNowhere.button.updateTopMenu();">
         <menuitem
-            id="httpNowhere-toggle"
+            id="httpNowhere-toggleEnabled"
             class="menuitem-iconic"
-            command="httpNowhere-command-toggle"
-            key="httpNowhere-key-toggle"/>
+            command="httpNowhere-command-toggleEnabled"
+            key="httpNowhere-key-toggleEnabled"/>
         <menuseparator/>
         <menu
             id="httpNowhere-recently-blocked"
             class="menu-iconic"
-            image="chrome://http-nowhere/skin/recent.png">
+            image="chrome://http-nowhere/skin/httpNowhere-recent.png">
           <menupopup
               id="httpNowhere-recently-blocked-popup"
               onpopupshowing="httpNowhere.button.updateRecentMenu();">
@@ -40,25 +40,25 @@
         <menuitem
             class="menuitem-iconic"
             label="Preferences"
-            image="chrome://http-nowhere/skin/prefs.png"/>
+            image="chrome://http-nowhere/skin/httpNowhere-prefs.png"/>
       </menupopup>
     </toolbarbutton>
   </toolbarpalette>
 
   <commandset>
     <command
-        id="httpNowhere-command-toggle"
-        oncommand="httpNowhere.button.toggle();"/>
+        id="httpNowhere-command-toggleEnabled"
+        oncommand="httpNowhere.toggleEnabled();"/>
     <command
         id="httpNowhere-command-clear"
-        oncommand="httpNowhere.button.clearRecent();"/>
+        oncommand="httpNowhere.clearRecent();"/>
   </commandset>
 
   <keyset>
     <key
-        id="httpNowhere-key-toggle"
+        id="httpNowhere-key-toggleEnabled"
         key="z"
         modifiers="control shift"
-        oncommand="httpNowhere.button.toggle();"/>
+        oncommand="httpNowhere.toggleEnabled();"/>
   </keyset>
 </overlay>

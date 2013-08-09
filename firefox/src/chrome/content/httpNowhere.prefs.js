@@ -31,4 +31,4 @@ httpNowhere.prefs = {
   getMaxRecentlyBlockedURLsPerHost: function() {
     return httpNowhere.prefs.branch.getIntPref("maxRecentlyBlockedURLsPerHost");
   }
-}
+};
