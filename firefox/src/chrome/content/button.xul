@@ -8,26 +8,28 @@
         id="http-nowhere-button"
         label="HTTP Nowhere"
         title="HTTP Nowhere"
-        oncommand="httpNowhere.button.toggleState();"
         image="chrome://http-nowhere/skin/button-off.png"
         type="menu">
-      <menupopup>
-        <menuitem id="http-nowhere-toggle" command="http-nowhere-button-toggleState"/>
+      <menupopup onpopupshowing="httpNowhere.button.updateTopMenu();">
+        <menuitem id="http-nowhere-toggle" class="menuitem-iconic" command="http-nowhere-command-toggle" key="http-nowhere-key-toggle"/>
         <menuseparator/>
         <menu id="http-nowhere-recently-blocked" image="chrome://http-nowhere/skin/recent.png" class="menu-iconic">
-          <menupopup id="http-nowhere-recently-blocked-popup">
+          <menupopup id="http-nowhere-recently-blocked-popup" onpopupshowing="httpNowhere.button.updateRecentMenu();">
             <menuseparator/>
-            <menuitem label="Clear Recent" command="http-nowhere-button-clearRecentList"/>
+            <menuitem label="Clear Recent" command="http-nowhere-command-clear"/>
           </menupopup>
         </menu>
         <menuitem label="Preferences" image="chrome://http-nowhere/skin/prefs.png" class="menuitem-iconic"/>
       </menupopup>
     </toolbarbutton>
   </toolbarpalette>
+
   <commandset>
-    <command id="http-nowhere-button-toggleState"
-      oncommand="httpNowhere.button.toggleState();" />
-    <command id="http-nowhere-button-clearRecentList"
-      oncommand="httpNowhere.button.clearRecentList();" />
+    <command id="http-nowhere-command-toggle" oncommand="httpNowhere.button.toggle();"/>
+    <command id="http-nowhere-command-clear" oncommand="httpNowhere.button.clearRecent();"/>
   </commandset>
+
+  <keyset>
+    <key id="http-nowhere-key-toggle" key="z" modifiers="control shift" oncommand="httpNowhere.button.toggle();"/>
+  </keyset>
 </overlay>
