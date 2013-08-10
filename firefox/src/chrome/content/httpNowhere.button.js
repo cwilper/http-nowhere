@@ -59,22 +59,76 @@ httpNowhere.button = {
     }
 
     var recentlyBlockedElement = httpNowhere.button._getWin().document.getElementById("httpNowhere-recently-blocked");
-    recentlyBlockedElement.label = "Recent Blocks (" + httpNowhere.recent.blockCount + ")";
+    recentlyBlockedElement.label = "Recently Blocked (" + httpNowhere.recent.blockCount + ")";
   },
 
   updateRecentMenu: function() {
-    var recentlyBlockedPopupElement = httpNowhere.button._getWin().document.getElementById("httpNowhere-recently-blocked-popup");
-    while (recentlyBlockedPopupElement.firstChild.tagName != "menuseparator") {
-      recentlyBlockedPopupElement.removeChild(recentlyBlockedPopupElement.firstChild);
+    var win = httpNowhere.button._getWin();
+
+    var recentlyBlockedPopup = win.document.getElementById("httpNowhere-recently-blocked-popup");
+    if (recentlyBlockedPopup.state == 'open') return true; // no need to re-populate
+    while (recentlyBlockedPopup.firstChild.tagName != "menuseparator") {
+      recentlyBlockedPopup.removeChild(recentlyBlockedPopup.firstChild);
     }
 
     var orderedHostnames = httpNowhere.recent.getKeysOrderedByLastBlockedDate(httpNowhere.recent.hostInfo);
     for (var i = 0; i < orderedHostnames.length; i++) {
       var hostname = orderedHostnames[i];
-      var hostInfo = httpNowhere.recent.hostInfo[orderedHostnames[i]];
-      var menuitem = httpNowhere.button._getWin().document.createElement("menuitem");
-      menuitem.setAttribute('label', hostname + " (" + hostInfo.blockCount + ")");
-      recentlyBlockedPopupElement.insertBefore(menuitem, recentlyBlockedPopupElement.firstChild);
+      var hostInfo = httpNowhere.recent.hostInfo[hostname];
+      var hostMenu = win.document.createElement("menu");
+      hostMenu.setAttribute('label', 'http://' + hostname + ' (' + hostInfo.blockCount + ')');
+      hostMenu.setAttribute('hostname', hostname);
+
+      var hostMenuPopup = win.document.createElement("menupopup");
+      hostMenuPopup.setAttribute('onpopupshowing', 'httpNowhere.button.updateRecentHostMenu(this);');
+      hostMenu.appendChild(hostMenuPopup);
+
+      recentlyBlockedPopup.insertBefore(hostMenu, recentlyBlockedPopup.firstChild);
     }
-  }
+
+    return true;
+  },
+
+  updateRecentHostMenu: function(hostMenuPopup) {
+    if (hostMenuPopup.state == 'open') return true; // no need to re-populate
+
+    var win = httpNowhere.button._getWin();
+
+    while (hostMenuPopup.hasChildNodes()) {
+      hostMenuPopup.removeChild(hostMenuPopup.firstChild);
+    }
+
+    var hostname = hostMenuPopup.parentNode.getAttribute('hostname');
+
+    var hostInfo = httpNowhere.recent.hostInfo[hostname];
+    var orderedUrls = httpNowhere.recent.getKeysOrderedByLastBlockedDate(hostInfo.urlInfo);
+    for (var i = 0; i < orderedUrls.length; i++) {
+      var url = orderedUrls[i];
+      var urlInfo = hostInfo.urlInfo[url];
+      var urlMenu = win.document.createElement("menu");
+      urlMenu.setAttribute('label', url + ' (' + urlInfo.blockCount + ')');
+
+      var urlMenuPopup = win.document.createElement("menupopup");
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Allow", url);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Quietly Block", url);
+      urlMenu.appendChild(urlMenuPopup);
+
+      hostMenuPopup.appendChild(urlMenu);
+    }
+
+    hostMenuPopup.appendChild(win.document.createElement("menuseparator"));
+
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Allow All", hostname);
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Quietly Block All", hostname);
+
+    return true;
+  },
+
+  _appendMenuItem: function(win, menupopup, label, value, command) {
+    var menuitem = win.document.createElement("menuitem");
+    menuitem.setAttribute("label", label);
+    menuitem.setAttribute("value", value);
+    menupopup.appendChild(menuitem);
+    return menuitem;
+  },
 };
