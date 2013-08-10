@@ -14,7 +14,15 @@ httpNowhere.button = {
   },
 
   updateAppearance: function(blocking) {
-    var buttonElement = httpNowhere.button._getWin().document.getElementById("httpNowhere-button");
+    var wins = Services.wm.getEnumerator(null);
+    while (wins.hasMoreElements()) {
+      var win = wins.getNext().QueryInterface(Components.interfaces.nsIDOMWindow);
+      httpNowhere.button._updateAppearanceForWin(win, blocking);
+    }
+  },
+
+  _updateAppearanceForWin: function(win, blocking) {
+    var buttonElement = win.document.getElementById("httpNowhere-button");
     if (buttonElement != null) {
       if (blocking && button.getAttribute('status') != 'blocking') {
         button.setAttribute('status', 'blocking');
