@@ -17,13 +17,10 @@
       type="application/x-javascript"
       src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
 
-  <dialogheader style="margin-left: 190px;" id="httpNowhere-prefs-dialogheader"/>
-
   <hbox flex="1">
     <listbox
         id="httpNowhere-prefs-list"
-        style="margin-top: -35px; border: 0px;"
-        width="180"
+        width="175"
         seltype="single"
         onselect="httpNowhere.prefs.pageSelected(document, window);">
       <listitem
@@ -47,6 +44,7 @@
           value="chrome://http-nowhere/content/httpNowhere-prefs-bloqed-page.xul"/>
     </listbox>
     <vbox flex="1">
+      <dialogheader id="httpNowhere-prefs-dialogheader"/>
       <iframe
           id="httpNowhere-prefs-iframe"
           flex="1"/>
