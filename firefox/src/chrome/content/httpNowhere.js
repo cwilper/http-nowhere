@@ -67,5 +67,9 @@ httpNowhere.clearRecent = function() {
   httpNowhere.button.updateAppearance();
 };
 
+httpNowhere.copyValueOf = function(element) {
+  var value = element.getAttribute('value');
+  Services.prompt.alert(null, "Copied This:", value);
+};
 
 window.addEventListener("load", httpNowhere.init, false);

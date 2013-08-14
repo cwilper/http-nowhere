@@ -29,14 +29,10 @@ httpNowhere.recent = {
         urlInfo: {}
       };
       httpNowhere.recent.hostInfo[uri.host] = hostInfo;
-      if (Object.keys(httpNowhere.recent.hostInfo).length > httpNowhere.prefs.getMaxRecentlyBlockedHosts()) {
-        // delete the hostInfo with the oldest blocked date
-        var orderedHostnames = httpNowhere.recent.getKeysOrderedByLastBlockedDate(httpNowhere.recent.hostInfo);
-        delete httpNowhere.recent.hostInfo[orderedHostnames[orderedHostnames.length - 1]];
-      }
     }
     hostInfo.blockCount += 1;
     hostInfo.lastBlockedDate = now;
+    httpNowhere.recent.dropOldHostInfo();
 
     // update hostInfo.urlInfo as appropriate
     var urlInfo = hostInfo.urlInfo[uri.spec];
@@ -45,19 +41,34 @@ httpNowhere.recent = {
         blockCount: 0
       };
       hostInfo.urlInfo[uri.spec] = urlInfo;
-      if (Object.keys(hostInfo.urlInfo) > httpNowhere.prefs.getMaxRecentlyBlockedURLsPerHost()) {
-        // delete the urlInfo with the oldest blocked date
-        var orderedUrls = httpNowhere.recent.getKeysOrderedByLastBlockedDate(hostInfo.urlInfo);
-        var oldUrlInfo = hostInfo.urlInfo[orderedUrls[orderedUrls.length - 1]];
-        delete hostInfo.urlInfo[orderedUrls[orderedUrls.length - 1]];
-        // recalculate the block count for this hostInfo
-        hostInfo.blockCount -= oldUrlInfo.blockCount;
-      }
     }
     urlInfo.blockCount += 1;
     urlInfo.lastBlockedDate = now;
+    httpNowhere.recent.dropOldUrlInfo(hostInfo);
 
-    // recalculate the global block count
+    httpNowhere.recent.recalculateBlockCount();
+  },
+
+  dropOldHostInfo: function() {
+    while (Object.keys(httpNowhere.recent.hostInfo).length > httpNowhere.prefs.getMaxRecentlyBlockedHosts()) {
+      // delete the hostInfo with the oldest blocked date
+      var orderedHostnames = httpNowhere.recent.getKeysOrderedByLastBlockedDate(httpNowhere.recent.hostInfo);
+      delete httpNowhere.recent.hostInfo[orderedHostnames[orderedHostnames.length - 1]];
+    }
+  },
+
+  dropOldUrlInfo: function(hostInfo) {
+    while (Object.keys(hostInfo.urlInfo).length > httpNowhere.prefs.getMaxRecentlyBlockedURLsPerHost()) {
+      // delete the urlInfo with the oldest blocked date
+      var orderedUrls = httpNowhere.recent.getKeysOrderedByLastBlockedDate(hostInfo.urlInfo);
+      var oldUrlInfo = hostInfo.urlInfo[orderedUrls[orderedUrls.length - 1]];
+      delete hostInfo.urlInfo[orderedUrls[orderedUrls.length - 1]];
+      // recalculate the block count for this hostInfo
+      hostInfo.blockCount -= oldUrlInfo.blockCount;
+    }
+  },
+
+  recalculateBlockCount: function() {
     var blockCount = 0;
     for (var hostname in httpNowhere.recent.hostInfo) {
       blockCount += httpNowhere.recent.hostInfo[hostname].blockCount;
@@ -65,9 +76,17 @@ httpNowhere.recent = {
     httpNowhere.recent.blockCount = blockCount;
   },
 
+  refresh: function() {
+    httpNowhere.recent.dropOldHostInfo();
+    for (var hostname in httpNowhere.recent.hostInfo) {
+      httpNowhere.recent.dropOldUrlInfo(httpNowhere.recent.hostInfo[hostname]);
+    }
+    httpNowhere.recent.recalculateBlockCount();
+  },
+
   getKeysOrderedByLastBlockedDate: function(info) {
     return Object.keys(info).sort(function(a, b) {
-      return info[a].lastBlockedDate - info[b].lastBlockedDate;
+      return info[b].lastBlockedDate - info[a].lastBlockedDate;
     });
   }
 };

@@ -72,11 +72,12 @@ httpNowhere.button = {
     }
 
     var orderedHostnames = httpNowhere.recent.getKeysOrderedByLastBlockedDate(httpNowhere.recent.hostInfo);
+    orderedHostnames.reverse();
     for (var i = 0; i < orderedHostnames.length; i++) {
       var hostname = orderedHostnames[i];
       var hostInfo = httpNowhere.recent.hostInfo[hostname];
       var hostMenu = win.document.createElement("menu");
-      hostMenu.setAttribute('label', 'http://' + hostname + ' (' + hostInfo.blockCount + ')');
+      hostMenu.setAttribute('label', 'From ' + hostname + ' (' + hostInfo.blockCount + ')');
       hostMenu.setAttribute('hostname', hostname);
 
       var hostMenuPopup = win.document.createElement("menupopup");
@@ -100,6 +101,16 @@ httpNowhere.button = {
 
     var hostname = hostMenuPopup.parentNode.getAttribute('hostname');
 
+    var allowImage = 'chrome://http-nowhere/skin/httpNowhere-allow.png';
+    var bloqImage = 'chrome://http-nowhere/skin/httpNowhere-bloq.png';
+    var copyImage = 'chrome://http-nowhere/skin/httpNowhere-copy.png';
+
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Allow All", hostname, null, allowImage);
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Block All Quietly", hostname, null, bloqImage);
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Copy Host", hostname, "httpNowhere.copyValueOf(this);", copyImage);
+
+    hostMenuPopup.appendChild(win.document.createElement("menuseparator"));
+
     var hostInfo = httpNowhere.recent.hostInfo[hostname];
     var orderedUrls = httpNowhere.recent.getKeysOrderedByLastBlockedDate(hostInfo.urlInfo);
     for (var i = 0; i < orderedUrls.length; i++) {
@@ -109,26 +120,28 @@ httpNowhere.button = {
       urlMenu.setAttribute('label', url + ' (' + urlInfo.blockCount + ')');
 
       var urlMenuPopup = win.document.createElement("menupopup");
-      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Allow", url);
-      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Quietly Block", url);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Allow", url, null, allowImage);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Block Quietly", url, null, bloqImage);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Copy URL", url, "httpNowhere.copyValueOf(this);", copyImage);
       urlMenu.appendChild(urlMenuPopup);
 
       hostMenuPopup.appendChild(urlMenu);
     }
 
-    hostMenuPopup.appendChild(win.document.createElement("menuseparator"));
-
-    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Allow All", hostname);
-    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Quietly Block All", hostname);
-
     return true;
   },
 
-  _appendMenuItem: function(win, menupopup, label, value, command) {
+  _appendMenuItem: function(win, menupopup, label, value, oncommand, image) {
     var menuitem = win.document.createElement("menuitem");
     menuitem.setAttribute("label", label);
     menuitem.setAttribute("value", value);
+    menuitem.setAttribute("oncommand", oncommand);
+    if (image != null) {
+      menuitem.setAttribute("class", "menuitem-iconic");
+      menuitem.setAttribute("image", image);
+    }
     menupopup.appendChild(menuitem);
     return menuitem;
   },
+
 };

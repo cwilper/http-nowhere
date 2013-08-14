@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://http-nowhere/skin/httpNowhere.css" type="text/css"?>
+
+<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="httpNowhere-prefs-allowed-page"
+    onload="httpNowhere.prefs.allowedPageLoaded(document, window);">
+
+  <script
+      type="application/x-javascript"
+      src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
+
+  <dialogheader title="Allowed URLs"/>
+
+  <hbox flex="1">
+  <listbox flex="1" height="100">
+    <listhead>
+      <listheader label="Host"/>
+      <listheader label="Port"/>
+      <listheader label="Path"/>
+    </listhead>
+    <listcols>
+      <listcol/>
+      <listcol/>
+      <listcol flex="1"/>
+    </listcols>
+    <listitem>
+      <listcell label="yahoo.com"/>
+      <listcell label="*"/>
+      <listcell label="*"/>
+    </listitem>
+    <listitem>
+      <listcell label="reddit.com"/>
+      <listcell label="80"/>
+      <listcell label="/"/>
+    </listitem>
+  </listbox>
+  <vbox>
+    <button label="Add"/>
+    <button label="Edit" disabled="true"/>
+    <button label="Delete" disabled="true"/>
+  </vbox>
+  </hbox>
+
+</page>

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://http-nowhere/skin/httpNowhere.css" type="text/css"?>
+
+<page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="httpNowhere-prefs-general-page"
+    onload="httpNowhere.prefs.generalPageLoaded(document, window);">
+
+  <script
+      type="application/x-javascript"
+      src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
+
+  <dialogheader title="General Settings"/>
+
+  <groupbox>
+    <caption label="Recently Blocked"/>
+    <vbox>
+      <hbox align="center">
+        <label value="Show the latest"/>
+        <textbox
+            id="httpNowhere-prefs-maxRecentlyBlockedHosts"
+            type="number"
+            size="2"
+            min="2"
+            max="99"
+            onchange="httpNowhere.prefs.setMaxRecentlyBlockedHosts(this.value)"/>
+        <label value="hosts"/>
+      </hbox>
+      <hbox align="center">
+        <label value="Show the latest"/>
+        <textbox
+            id="httpNowhere-prefs-maxRecentlyBlockedURLsPerHost"
+            type="number"
+            size="2"
+            min="2"
+            max="99"
+            onchange="httpNowhere.prefs.setMaxRecentlyBlockedURLsPerHost(this.value)"/>
+        <label value="distinct URLs per host"/>
+      </hbox>
+    </vbox>
+  </groupbox>
+
+</page>

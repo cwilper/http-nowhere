@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://http-nowhere/skin/httpNowhere.css" type="text/css"?>
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="httpNowhere-prefs-dialog"
+    title="HTTP Nowhere Preferences"
+    width="700"
+    height="400"
+    buttons="accept"
+    buttonlabelaccept="Done"
+    onload="httpNowhere.prefs.pageSelected(document, window);"
+    ondialogaccept="return httpNowhere.prefs.dialogClosed(document, window);"
+    ondialogcancel="return httpNowhere.prefs.dialogClosed(document, window);">
+
+  <script
+      type="application/x-javascript"
+      src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
+
+  <hbox flex="1">
+    <listbox
+        id="httpNowhere-prefs-list"
+        width="180"
+        seltype="single"
+        onselect="httpNowhere.prefs.pageSelected(document, window);">
+      <listitem
+          id="httpNowhere-prefs-list-general"
+          class="listitem-iconic"
+          label="General Settings"
+          image="chrome://http-nowhere/skin/httpNowhere-prefs.png"
+          value="chrome://http-nowhere/content/httpNowhere-prefs-general-page.xul"
+          selected="true"/>
+      <listitem
+          id="httpNowhere-prefs-list-allowed"
+          class="listitem-iconic"
+          label="Allowed URLs"
+          image="chrome://http-nowhere/skin/httpNowhere-allow.png"
+          value="chrome://http-nowhere/content/httpNowhere-prefs-allowed-page.xul"/>
+      <listitem
+          id="httpNowhere-prefs-list-blocked"
+          class="listitem-iconic"
+          label="Quietly Blocked URLs"
+          image="chrome://http-nowhere/skin/httpNowhere-bloq.png"
+          value="chrome://http-nowhere/content/httpNowhere-prefs-bloqed-page.xul"/>
+    </listbox>
+    <vbox flex="1">
+      <iframe
+          id="httpNowhere-prefs-iframe"
+          flex="1"/>
+    </vbox>
+  </hbox>
+</dialog>

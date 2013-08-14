@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://http-nowhere/skin/httpNowhere.css" type="text/css"?>
 
-<overlay id="httpNowhere-button-overlay"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    id="httpNowhere-button-overlay">
+
   <script
       type="application/x-javascript"
       src="chrome://http-nowhere/content/httpNowhere.js"/>
@@ -33,6 +34,8 @@
               onpopupshowing="httpNowhere.button.updateRecentMenu();">
             <menuseparator/>
             <menuitem
+                class="menuitem-iconic"
+                image="chrome://http-nowhere/skin/httpNowhere-clear.png"
                 label="Clear Recent"
                 command="httpNowhere-command-clear"/>
           </menupopup>
@@ -40,6 +43,7 @@
         <menuitem
             class="menuitem-iconic"
             label="Preferences"
+            command="httpNowhere-command-launchPrefs"
             image="chrome://http-nowhere/skin/httpNowhere-prefs.png"/>
       </menupopup>
     </toolbarbutton>
@@ -52,6 +56,9 @@
     <command
         id="httpNowhere-command-clear"
         oncommand="httpNowhere.clearRecent();"/>
+    <command
+        id="httpNowhere-command-launchPrefs"
+        oncommand="window.openDialog('chrome://http-nowhere/content/httpNowhere-prefs-dialog.xul');"/>
   </commandset>
 
   <keyset>
