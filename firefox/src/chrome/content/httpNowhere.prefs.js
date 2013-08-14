@@ -63,5 +63,9 @@ httpNowhere.prefs = {
 
   allowedPageLoaded: function(document, window) {
     return true;
+  },
+
+  bloqedPageLoaded: function(document, window) {
+    return true;
   }
 };

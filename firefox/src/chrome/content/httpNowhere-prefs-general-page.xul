@@ -21,7 +21,7 @@
             id="httpNowhere-prefs-maxRecentlyBlockedHosts"
             type="number"
             size="2"
-            min="2"
+            min="1"
             max="99"
             onchange="httpNowhere.prefs.setMaxRecentlyBlockedHosts(this.value)"/>
         <label value="hosts"/>
@@ -32,7 +32,7 @@
             id="httpNowhere-prefs-maxRecentlyBlockedURLsPerHost"
             type="number"
             size="2"
-            min="2"
+            min="1"
             max="99"
             onchange="httpNowhere.prefs.setMaxRecentlyBlockedURLsPerHost(this.value)"/>
         <label value="distinct URLs per host"/>
