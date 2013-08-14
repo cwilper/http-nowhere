@@ -12,8 +12,7 @@
 
   <dialogheader title="General Settings"/>
 
-  <groupbox>
-    <caption label="Recently Blocked"/>
+  <label class="header" value="Recently Blocked"/>
     <vbox>
       <hbox align="center">
         <label value="Show the latest"/>
@@ -38,6 +37,5 @@
         <label value="distinct URLs per host"/>
       </hbox>
     </vbox>
-  </groupbox>
 
 </page>

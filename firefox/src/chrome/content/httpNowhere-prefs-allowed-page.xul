@@ -12,34 +12,37 @@
 
   <dialogheader title="Allowed URLs"/>
 
+  <label class="header" value="These will never be blocked"/>
   <hbox flex="1">
-  <listbox flex="1" height="100">
-    <listhead>
-      <listheader label="Host"/>
-      <listheader label="Port"/>
-      <listheader label="Path"/>
-    </listhead>
-    <listcols>
-      <listcol/>
-      <listcol/>
-      <listcol flex="1"/>
-    </listcols>
-    <listitem>
-      <listcell label="yahoo.com"/>
-      <listcell label="*"/>
-      <listcell label="*"/>
-    </listitem>
-    <listitem>
-      <listcell label="reddit.com"/>
-      <listcell label="80"/>
-      <listcell label="/"/>
-    </listitem>
-  </listbox>
-  <vbox>
-    <button label="Add"/>
-    <button label="Edit" disabled="true"/>
-    <button label="Delete" disabled="true"/>
-  </vbox>
+    <listbox flex="1" height="100">
+      <listhead>
+        <listheader label="Host"/>
+        <listheader label="Port"/>
+        <listheader label="Path"/>
+      </listhead>
+      <listcols>
+        <listcol/>
+        <listcol/>
+        <listcol flex="1"/>
+      </listcols>
+      <listitem>
+        <listcell label="yahoo.com "/>
+        <listcell label=" * "/>
+        <listcell label=" * "/>
+      </listitem>
+      <listitem>
+          <listcell label="reddit.com "/>
+        <listcell label=" 80 "/>
+        <listcell label=" / "/>
+      </listitem>
+    </listbox>
+    <vbox>
+      <button label="Add"/>
+      <button label="Edit" disabled="true"/>
+      <button label="Delete" disabled="true"/>
+    </vbox>
   </hbox>
-
+  <label>
+    Asterisk (*) is a wildcard, and matches any value.
+  </label>
 </page>
