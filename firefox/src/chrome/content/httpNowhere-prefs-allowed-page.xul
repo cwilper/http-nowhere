@@ -10,8 +10,6 @@
       type="application/x-javascript"
       src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
 
-  <dialogheader title="Allowed URLs"/>
-
   <label class="header" value="These will never be blocked"/>
   <hbox flex="1">
     <listbox flex="1" height="100">

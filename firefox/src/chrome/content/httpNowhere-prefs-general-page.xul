@@ -10,8 +10,6 @@
       type="application/x-javascript"
       src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
 
-  <dialogheader title="General Settings"/>
-
   <label class="header" value="Recently Blocked"/>
     <vbox>
       <hbox align="center">

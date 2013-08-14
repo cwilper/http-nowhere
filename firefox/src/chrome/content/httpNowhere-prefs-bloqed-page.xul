@@ -10,8 +10,6 @@
       type="application/x-javascript"
       src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
 
-  <dialogheader title="Quietly Blocked URLs"/>
-
   <label class="header" value="These will never alert or show up under Recently Blocked"/>
   <hbox flex="1">
     <listbox flex="1" height="100">

@@ -44,6 +44,7 @@
           value="chrome://http-nowhere/content/httpNowhere-prefs-bloqed-page.xul"/>
     </listbox>
     <vbox flex="1">
+      <dialogheader id="httpNowhere-prefs-dialogheader"/>
       <iframe
           id="httpNowhere-prefs-iframe"
           flex="1"/>

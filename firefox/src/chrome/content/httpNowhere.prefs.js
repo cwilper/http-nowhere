@@ -44,9 +44,13 @@ httpNowhere.prefs = {
   },
 
   pageSelected: function(document, window) {
-    var url = document.getElementById('httpNowhere-prefs-list').selectedItem.value;
+    var selectedItem = document.getElementById('httpNowhere-prefs-list').selectedItem;
+
     var iframe = document.getElementById('httpNowhere-prefs-iframe');
-    iframe.setAttribute('src', url);
+    iframe.setAttribute('src', selectedItem.value);
+
+    var dialogheader = document.getElementById('httpNowhere-prefs-dialogheader');
+    dialogheader.setAttribute('title', selectedItem.label);
   },
 
   dialogClosed: function(document, window) {
