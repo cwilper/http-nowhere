@@ -7,8 +7,8 @@ if ("undefined" === typeof(httpNowhere)) var httpNowhere = {};
 httpNowhere.rules = {
 
   allowedURLs: new Array(),
-  
-  bloqedURLs: new Array(),
+
+  ignoredURLs: new Array(),
 
   load: function() {
   },
@@ -17,10 +17,10 @@ httpNowhere.rules = {
   },
 
   isAllowed: function(url) {
-    return true;
+    return false;
   },
 
-  isBloqed: function(url) {
+  isIgnored: function(url) {
     return false;
   }
 };

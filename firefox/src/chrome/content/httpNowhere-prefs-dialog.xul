@@ -20,28 +20,25 @@
   <hbox flex="1">
     <listbox
         id="httpNowhere-prefs-list"
-        width="175"
+        width="160"
         seltype="single"
         onselect="httpNowhere.prefs.pageSelected(document, window);">
       <listitem
-          id="httpNowhere-prefs-list-general"
           class="listitem-iconic"
           label="General Settings"
           image="chrome://http-nowhere/skin/httpNowhere-prefs.png"
           value="chrome://http-nowhere/content/httpNowhere-prefs-general-page.xul"
           selected="true"/>
       <listitem
-          id="httpNowhere-prefs-list-allowed"
           class="listitem-iconic"
           label="Allowed URLs"
           image="chrome://http-nowhere/skin/httpNowhere-allow.png"
           value="chrome://http-nowhere/content/httpNowhere-prefs-allowed-page.xul"/>
       <listitem
-          id="httpNowhere-prefs-list-blocked"
           class="listitem-iconic"
-          label="Quietly Blocked URLs"
-          image="chrome://http-nowhere/skin/httpNowhere-bloq.png"
-          value="chrome://http-nowhere/content/httpNowhere-prefs-bloqed-page.xul"/>
+          label="Ignored URLs"
+          image="chrome://http-nowhere/skin/httpNowhere-ignore.png"
+          value="chrome://http-nowhere/content/httpNowhere-prefs-ignored-page.xul"/>
     </listbox>
     <vbox flex="1">
       <dialogheader id="httpNowhere-prefs-dialogheader"/>

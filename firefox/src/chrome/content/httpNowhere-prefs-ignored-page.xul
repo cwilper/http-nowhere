@@ -3,8 +3,8 @@
 <?xml-stylesheet href="chrome://http-nowhere/skin/httpNowhere.css" type="text/css"?>
 
 <page xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    id="httpNowhere-prefs-bloqed-page"
-    onload="httpNowhere.prefs.bloqedPageLoaded(document, window);">
+    id="httpNowhere-prefs-ignored-page"
+    onload="httpNowhere.prefs.ignoredPageLoaded(document, window);">
 
   <script
       type="application/x-javascript"

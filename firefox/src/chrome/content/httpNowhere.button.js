@@ -102,11 +102,11 @@ httpNowhere.button = {
     var hostname = hostMenuPopup.parentNode.getAttribute('hostname');
 
     var allowImage = 'chrome://http-nowhere/skin/httpNowhere-allow.png';
-    var bloqImage = 'chrome://http-nowhere/skin/httpNowhere-bloq.png';
+    var ignoreImage = 'chrome://http-nowhere/skin/httpNowhere-ignore.png';
     var copyImage = 'chrome://http-nowhere/skin/httpNowhere-copy.png';
 
     httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Allow All", hostname, null, allowImage);
-    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Block All Quietly", hostname, null, bloqImage);
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Ignore All", hostname, null, ignoreImage);
     httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Copy Host", hostname, "httpNowhere.copyValueOf(this);", copyImage);
 
     hostMenuPopup.appendChild(win.document.createElement("menuseparator"));
@@ -121,7 +121,7 @@ httpNowhere.button = {
 
       var urlMenuPopup = win.document.createElement("menupopup");
       httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Allow", url, null, allowImage);
-      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Block Quietly", url, null, bloqImage);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Ignore", url, null, ignoreImage);
       httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Copy URL", url, "httpNowhere.copyValueOf(this);", copyImage);
       urlMenu.appendChild(urlMenuPopup);
 

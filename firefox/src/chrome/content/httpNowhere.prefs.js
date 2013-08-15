@@ -69,7 +69,7 @@ httpNowhere.prefs = {
     return true;
   },
 
-  bloqedPageLoaded: function(document, window) {
+  ignoredPageLoaded: function(document, window) {
     return true;
   }
 };
