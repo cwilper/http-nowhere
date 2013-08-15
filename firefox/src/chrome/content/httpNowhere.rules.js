@@ -6,29 +6,21 @@ if ("undefined" === typeof(httpNowhere)) var httpNowhere = {};
 
 httpNowhere.rules = {
 
-  branch: Services.prefs.getBranch("extensions.httpNowhere."),
+  allowedURLs: new Array(),
+  
+  bloqedURLs: new Array(),
 
-  isEnabled: function() {
-    return httpNowhere.prefs.branch.getBoolPref("enabled");
+  load: function() {
   },
 
-  setEnabled: function(value) {
-    return httpNowhere.prefs.branch.setBoolPref("enabled", value);
+  save: function() {
   },
 
-  isFirstRun: function() {
-    return httpNowhere.prefs.branch.getBoolPref("firstRun");
+  isAllowed: function(url) {
+    return true;
   },
 
-  setFirstRun: function(value) {
-    return httpNowhere.prefs.branch.setBoolPref("firstRun", value);
-  },
-
-  getMaxRecentlyBlockedHosts: function() {
-    return httpNowhere.prefs.branch.getIntPref("maxRecentlyBlockedHosts");
-  },
-
-  getMaxRecentlyBlockedURLsPerHost: function() {
-    return httpNowhere.prefs.branch.getIntPref("maxRecentlyBlockedURLsPerHost");
+  isBloqed: function(url) {
+    return false;
   }
 };
