@@ -364,9 +364,9 @@ httpNowhere.recent = {
 
 httpNowhere.rules = {
 
-  allowedURLs: new Array(),
+  allowedPatterns: new Array(),
 
-  ignoredURLs: new Array(),
+  ignoredPatterns: new Array(),
 
   load: function() {
   },
@@ -380,6 +380,23 @@ httpNowhere.rules = {
 
   isIgnored: function(uri) {
     return uri.host == 'localhost';
+  },
+
+  _hasMatchingPattern: function(patterns, uri) {
+    for (var i = 0; i < patterns.length; i++) {
+      if (httpNowhere.rules._isMatchingPattern(patterns[i], uri)) {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  _isMatchingPattern: function(pattern, uri) {
+    
+  },
+
+  _escapeForRegEx: function(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
   }
 };
 
