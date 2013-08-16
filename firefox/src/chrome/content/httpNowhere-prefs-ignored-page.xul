@@ -6,9 +6,9 @@
     id="httpNowhere-prefs-ignored-page"
     onload="httpNowhere.prefs.ignoredPageLoaded(document, window);">
 
-  <script
-      type="application/x-javascript"
-      src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
+  <script type="application/x-javascript">
+    Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
+  </script>
 
   <label class="header" value="These will never alert or show up under Recently Blocked"/>
   <hbox flex="1">

@@ -4,9 +4,11 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     id="httpNowhere-button-overlay">
 
-  <script
-      type="application/x-javascript"
-      src="chrome://http-nowhere/content/httpNowhere.js"/>
+  <script type="application/x-javascript">
+    Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
+
+    window.addEventListener("load", httpNowhere.init, false);
+  </script>
 
   <toolbarpalette id="BrowserToolbarPalette">
     <toolbarbutton

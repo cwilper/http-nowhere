@@ -13,9 +13,9 @@
     ondialogaccept="return httpNowhere.prefs.dialogClosed(document, window);"
     ondialogcancel="return httpNowhere.prefs.dialogClosed(document, window);">
 
-  <script
-      type="application/x-javascript"
-      src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
+  <script type="application/x-javascript">
+    Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
+  </script>
 
   <hbox flex="1">
     <listbox

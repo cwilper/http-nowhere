@@ -6,9 +6,9 @@
     id="httpNowhere-prefs-allowed-page"
     onload="httpNowhere.prefs.allowedPageLoaded(document, window);">
 
-  <script
-      type="application/x-javascript"
-      src="chrome://http-nowhere/content/httpNowhere.prefs.js"/>
+  <script type="application/x-javascript">
+    Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
+  </script>
 
   <label class="header" value="These will never be blocked"/>
   <hbox flex="1">
