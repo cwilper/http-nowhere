@@ -364,40 +364,55 @@ httpNowhere.recent = {
 
 httpNowhere.rules = {
 
-  allowedPatterns: new Array(),
+  allowedPatterns: ['http://*example.com:80/'],
 
-  ignoredPatterns: new Array(),
+  ignoredPatterns: ['http://www.ignored.com:80/'],
 
   load: function() {
+    // WARN if any non-http, or URLs with capital letters or unspecified ports are included
   },
 
   save: function() {
   },
 
   isAllowed: function(uri) {
-    return uri.scheme == 'https';
+    return uri.scheme == 'https' || httpNowhere.rules._matchesAny(uri, httpNowhere.rules.allowedPatterns);
   },
 
   isIgnored: function(uri) {
-    return uri.host == 'localhost';
+    return httpNowhere.rules._matchesAny(uri, httpNowhere.rules.ignoredPatterns);
   },
 
-  _hasMatchingPattern: function(patterns, uri) {
+  _matchesAny: function(uri, patterns) {
     for (var i = 0; i < patterns.length; i++) {
-      if (httpNowhere.rules._isMatchingPattern(patterns[i], uri)) {
+      if (httpNowhere.rules._matches(uri, patterns[i])) {
         return true;
       }
     }
     return false;
   },
 
-  _isMatchingPattern: function(pattern, uri) {
-    
+  _matches: function(uri, pattern) {
+    var portNum = uri.port;
+    if (portNum == -1) {
+      portNum = 80;
+    }
+    var normalizedUri = uri.scheme + '://' + uri.host + ':' + portNum + uri.path;
+    Services.console.logStringMessage(normalizedUri);
+
+    var regExp;
+    if (pattern.indexOf('~') == 0) {
+      regExp = new RegExp(pattern);
+    } else {
+      regExp = httpNowhere.rules._patternToRegExp(pattern);
+    }
+
+    return regExp.test(normalizedUri);
   },
 
-  _escapeForRegEx: function(s) {
-    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+  _patternToRegExp: function(pattern) {
+    var re = '^' + pattern.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*+/g, '.*') + '$';
+    Services.console.logStringMessage(pattern + " -> " + re);
+    return new RegExp(re);
   }
 };
-
-//window.addEventListener("load", httpNowhere.init, false);
