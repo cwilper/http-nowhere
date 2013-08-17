@@ -269,11 +269,71 @@ httpNowhere.prefs = {
   },
 
   allowedPageLoaded: function(document, window) {
+    httpNowhere.prefs._refreshList(
+        document,
+        document.getElementById('httpNowhere-prefs-allowed-listbox'),
+        httpNowhere.rules.allowedPatterns);
     return true;
   },
 
   ignoredPageLoaded: function(document, window) {
+    httpNowhere.prefs._refreshList(
+        document,
+        document.getElementById('httpNowhere-prefs-ignored-listbox'),
+        httpNowhere.rules.ignoredPatterns);
     return true;
+  },
+
+  _refreshList: function(document, listbox, patterns) {
+    while (listbox.hasChildNodes()) {
+      listbox.removeChild(listbox.firstChild);
+    }
+
+    var listhead = document.createElement('listhead');
+    var hostHeader = document.createElement('listheader');
+    hostHeader.setAttribute('label', 'Host');
+    listhead.appendChild(hostHeader);
+    var portHeader = document.createElement("listheader");
+    portHeader.setAttribute('label', 'Port');
+    listhead.appendChild(portHeader);
+    var pathHeader = document.createElement("listheader");
+    pathHeader.setAttribute('label', 'Path');
+    listhead.appendChild(pathHeader);
+    listbox.appendChild(listhead);
+
+    var listcols = document.createElement('listcols');
+    var listcol = document.createElement('listcol');
+    listcols.appendChild(listcol);
+    listcol = document.createElement('listcol');
+    listcols.appendChild(listcol);
+    listcol = document.createElement('listcol');
+    listcol.setAttribute('flex', '1');
+    listcols.appendChild(listcol);
+    listbox.appendChild(listcols);
+
+    patterns.sort(function(a, b){return a < b ? -1 : 1});
+
+    for (var i = 0; i < patterns.length; i++) {
+      var j = patterns[i].indexOf('/');
+      var afterScheme = patterns[i].substr(j + 2);
+      j = afterScheme.indexOf('/');
+      var hostPort = afterScheme.substr(0, j).split(':');
+      var host = hostPort[0];
+      var port = hostPort[1];
+      var path = afterScheme.substr(j);
+
+      var listitem = document.createElement('listitem');
+      var hostCell = document.createElement('listcell');
+      hostCell.setAttribute('label', host + ' ');
+      listitem.appendChild(hostCell);
+      var portCell = document.createElement('listcell');
+      portCell.setAttribute('label',  ' ' + port + ' ');
+      listitem.appendChild(portCell);
+      var pathCell = document.createElement('listcell');
+      pathCell.setAttribute('label', ' ' + path);
+      listitem.appendChild(pathCell);
+      listbox.appendChild(listitem);
+    }
   }
 };
 
@@ -364,12 +424,11 @@ httpNowhere.recent = {
 
 httpNowhere.rules = {
 
-  allowedPatterns: ['http://*example.com:80/'],
+  allowedPatterns: ['http://imgur.com:80/*', 'http://*.imgur.com:80/*'],
 
-  ignoredPatterns: ['http://www.ignored.com:80/'],
+  ignoredPatterns: ['http://ocsp.*:80/*', 'http://*.adzerk.net:80/*'],
 
   load: function() {
-    // WARN if any non-http, or URLs with capital letters or unspecified ports are included
   },
 
   save: function() {

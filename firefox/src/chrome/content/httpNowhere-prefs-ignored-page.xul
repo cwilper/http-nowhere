@@ -12,28 +12,7 @@
 
   <label class="header" value="These will never alert or show up under Recently Blocked"/>
   <hbox flex="1">
-    <listbox flex="1" height="100">
-      <listhead>
-        <listheader label="Host"/>
-        <listheader label="Port"/>
-        <listheader label="Path"/>
-      </listhead>
-      <listcols>
-        <listcol/>
-        <listcol/>
-        <listcol flex="1"/>
-      </listcols>
-      <listitem>
-        <listcell label="yahoo.com"/>
-        <listcell label="*"/>
-        <listcell label="*"/>
-      </listitem>
-      <listitem>
-        <listcell label="reddit.com"/>
-        <listcell label="80"/>
-        <listcell label="/"/>
-      </listitem>
-    </listbox>
+    <listbox id="httpNowhere-prefs-ignored-listbox" flex="1" height="100"/>
     <vbox>
       <button label="Add"/>
       <button label="Edit" disabled="true"/>
