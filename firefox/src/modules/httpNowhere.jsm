@@ -29,7 +29,7 @@ var httpNowhere = {
          httpNowhere._getWindow().document.persist('nav-bar', 'currentset');
       }
       // give a quick one-time usage message
-      Services.prompt.alert(null, "HTTP Nowhere is now installed", "Click the lock button to enable or disable it.\n\nWhile enabled, unencrypted web requests will fail.");
+      Services.prompt.alert(null, "HTTP Nowhere is now installed", "Click the lock button to disable, enable, and configure it.\n\nWhile red (enabled), unencrypted web requests will fail unless allowed explicitly.");
       httpNowhere.prefs.setFirstRun(false);
     }
     httpNowhere.button.updateAppearance();
