@@ -24,6 +24,6 @@
     </vbox>
   </hbox>
   <label>
-    Asterisk (*) is a wildcard, and matches any value.
+    (* anywhere matches any value)
   </label>
 </page>

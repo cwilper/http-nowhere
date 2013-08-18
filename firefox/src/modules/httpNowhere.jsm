@@ -77,7 +77,9 @@ var httpNowhere = {
 
   copyValueOf: function(element) {
     var value = element.getAttribute('value');
-    Services.prompt.alert(null, "Copied This:", value);
+    const gClipboardHelper = Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+        .getService(Components.interfaces.nsIClipboardHelper);
+    gClipboardHelper.copyString(value);
   }
 }
 
@@ -175,9 +177,9 @@ httpNowhere.button = {
     var ignoreImage = 'chrome://http-nowhere/skin/httpNowhere-ignore.png';
     var copyImage = 'chrome://http-nowhere/skin/httpNowhere-copy.png';
 
-    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Allow All", hostname, null, allowImage);
-    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Ignore All", hostname, null, ignoreImage);
-    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Copy Host", hostname, "httpNowhere.copyValueOf(this);", copyImage);
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Allow all from this host", hostname, "httpNowhere.prefs.addAllow(document, window, this);", allowImage);
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Ignore all from this host", hostname, "httpNowhere.prefs.addIgnore(document, window, this);", ignoreImage);
+    httpNowhere.button._appendMenuItem(win, hostMenuPopup, "Copy this host", hostname, "httpNowhere.copyValueOf(this);", copyImage);
 
     hostMenuPopup.appendChild(win.document.createElement("menuseparator"));
 
@@ -190,9 +192,9 @@ httpNowhere.button = {
       urlMenu.setAttribute('label', url + ' (' + urlInfo.blockCount + ')');
 
       var urlMenuPopup = win.document.createElement("menupopup");
-      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Allow", url, null, allowImage);
-      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Ignore", url, null, ignoreImage);
-      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Copy URL", url, "httpNowhere.copyValueOf(this);", copyImage);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Allow this URL", url, "httpNowhere.prefs.addAllow(document, window, this);", allowImage);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Ignore this URL", url, "httpNowhere.prefs.addIgnore(document, window, this);", ignoreImage);
+      httpNowhere.button._appendMenuItem(win, urlMenuPopup, "Copy this URL", url, "httpNowhere.copyValueOf(this);", copyImage);
       urlMenu.appendChild(urlMenuPopup);
 
       hostMenuPopup.appendChild(urlMenu);
@@ -294,20 +296,21 @@ httpNowhere.prefs = {
     return true;
   },
 
-  _promptForPattern: function(document, window, text, suggest) {
+  _promptForPattern: function(document, window, title, suggest) {
     var userpattern;
-    if (suggest) {
-      userpattern = window.prompt(text, suggest);
-    } else {
-      userpattern = window.prompt(text);
+    if (!suggest) {
+      suggest = "";
     }
-    if (userpattern == null) {
+    var input = { value: suggest };
+    var text = 'Format is host/path or host:port/path\n\n(* anywhere matches any value)';
+    var ok = Services.prompt.prompt(window, title, text, input, null, {value: false});
+    if (!ok) {
       return null;
     }
-    userpattern = userpattern.trim();
+    userpattern = input.value.trim();
     var pattern = userpattern;
     if (pattern.length == 0 || pattern === 'host:port/path') {
-      return httpNowhere.prefs._promptForPattern(document, window, text, suggest);
+      return httpNowhere.prefs._promptForPattern(document, window, title, suggest);
     }
     if (!pattern.startsWith("http://")) {
       pattern = "http://" + pattern;
@@ -323,12 +326,12 @@ httpNowhere.prefs = {
     var hostPort = afterScheme.substr(0, j).split(':');
     if (hostPort.length > 2) {
       window.alert("Too many colons in host:port");
-      return httpNowhere.prefs._promptForPattern(document, window, text, userpattern);
+      return httpNowhere.prefs._promptForPattern(document, window, title, userpattern);
     }
     var host = hostPort[0].trim();
     if (host.length == 0) {
       window.alert("No host specified");
-      return httpNowhere.prefs._promptForPattern(document, window, text, userpattern);
+      return httpNowhere.prefs._promptForPattern(document, window, title, userpattern);
     }
     var port = '80';
     if (hostPort.length == 2) {
@@ -342,11 +345,53 @@ httpNowhere.prefs = {
     return 'http://' + host + ":" + port + path;
   },
 
+  addAllow: function(document, window, menuitem) {
+    var suggest = menuitem.value;
+    Services.console.logStringMessage("addAllow suggest=" + suggest);
+    if (suggest.indexOf("http://") != 0) {
+      suggest = suggest + ":*/*";
+    } else {
+      suggest = suggest.substr(7);
+    }
+    var pattern = httpNowhere.prefs._promptForPattern(
+        document,
+        window,
+        'Add Allowed URL(s)',
+        suggest);
+    if (pattern != null) {
+      httpNowhere.rules.allowedPatterns.push(pattern);
+      httpNowhere.rules.save();
+      httpNowhere.recent.refresh();
+      httpNowhere.button.updateAppearance();
+    }
+  },
+
+  addIgnore: function(document, window, menuitem) {
+    var suggest = menuitem.value;
+    Services.console.logStringMessage("addIgnore suggest=" + suggest);
+    if (suggest.indexOf("http://") != 0) {
+      suggest = suggest + ":*/*";
+    } else {
+      suggest = suggest.substr(7);
+    }
+    var pattern = httpNowhere.prefs._promptForPattern(
+        document,
+        window,
+        'Add Ignored URL(s)',
+        suggest);
+    if (pattern != null) {
+      httpNowhere.rules.ignoredPatterns.push(pattern);
+      httpNowhere.rules.save();
+      httpNowhere.recent.refresh();
+      httpNowhere.button.updateAppearance();
+    }
+  },
+
   addAllowed: function(document, window) {
     var pattern = httpNowhere.prefs._promptForPattern(
         document,
         window,
-        'Add Allowed HTTP URL',
+        'Add Allowed URL(s)',
         'host:port/path');
     if (pattern != null) {
       httpNowhere.rules.allowedPatterns.push(pattern);
@@ -366,7 +411,7 @@ httpNowhere.prefs = {
     var pattern = httpNowhere.prefs._promptForPattern(
         document,
         window,
-        'Edit Allowed HTTP URL',
+        'Edit Allowed URL(s)',
         afterScheme);
     if (pattern != null) {
       for (var i = 0; i < httpNowhere.rules.allowedPatterns.length; i++) {
@@ -386,7 +431,7 @@ httpNowhere.prefs = {
 
   deleteAllowed: function(document, window) {
     var oldPattern = document.getElementById('httpNowhere-prefs-allowed-listbox').selectedItem.value;
-    if (window.confirm("Delete Allowed HTTP URL?\n\n" + oldPattern)) {
+    if (Services.prompt.confirm(window, "Delete Allowed URL?", oldPattern + "\n\nThis URL will no longer be allowed.")) {
       var newArray = new Array();
       for (var i = 0; i < httpNowhere.rules.allowedPatterns.length; i++) {
         var value = httpNowhere.rules.allowedPatterns[i];
@@ -408,7 +453,7 @@ httpNowhere.prefs = {
     var pattern = httpNowhere.prefs._promptForPattern(
         document,
         window,
-        'Add Ignored HTTP URL',
+        'Add Ignored URL',
         'host:port/path');
     if (pattern != null) {
       httpNowhere.rules.ignoredPatterns.push(pattern);
@@ -428,7 +473,7 @@ httpNowhere.prefs = {
     var pattern = httpNowhere.prefs._promptForPattern(
         document,
         window,
-        'Edit Ignored HTTP URL',
+        'Edit Ignored URL',
         afterScheme);
     if (pattern != null) {
       for (var i = 0; i < httpNowhere.rules.ignoredPatterns.length; i++) {
@@ -448,7 +493,7 @@ httpNowhere.prefs = {
 
   deleteIgnored: function(document, window) {
     var oldPattern = document.getElementById('httpNowhere-prefs-ignored-listbox').selectedItem.value;
-    if (window.confirm("Delete Allowed HTTP URL?\n\n" + oldPattern)) {
+    if (Services.prompt.confirm(window, "Delete Ignored URL?", oldPattern + "\n\nThis URL will no longer be ignored.")) {
       var newArray = new Array();
       for (var i = 0; i < httpNowhere.rules.ignoredPatterns.length; i++) {
         var value = httpNowhere.rules.ignoredPatterns[i];
@@ -597,10 +642,21 @@ httpNowhere.recent = {
     for (var hostname in httpNowhere.recent.hostInfo) {
       var hostInfo = httpNowhere.recent.hostInfo[hostname];
       for (var url in hostInfo.urlInfo) {
-        //TODO: check against allowed/ignored and remove
+        Services.console.logStringMessage("Checking if " + url + " needs to be removed");
+        // remove this urlInfo from this hostInfo if it's no longer blocked
+        var uri = Services.io.newURI(url, null, null);
+        if (httpNowhere.rules.isAllowed(uri) || httpNowhere.rules.isIgnored(uri)) {
+          var oldUrlInfo = hostInfo.urlInfo[url];
+          delete hostInfo.urlInfo[url];
+          hostInfo.blockCount -= oldUrlInfo.blockCount;
+          Services.console.logStringMessage("Removed " + url);
+        }
       }
-      // TODO: remove hostinfo if no more urls for this host
-      // TODO: update hostinfo counts..
+      if (Object.keys(hostInfo.urlInfo).length == 0) {
+        // remove hostInfo if no more urlInfo for it
+        delete httpNowhere.recent.hostInfo[hostname];
+      }
+      httpNowhere.recent.recalculateBlockCount();
     }
 
     // remove oldest urlinfo and hostinfo if needed to fit within maximums
