@@ -12,11 +12,15 @@
 
   <label class="header" value="These will never alert or show up under Recently Blocked"/>
   <hbox flex="1">
-    <listbox id="httpNowhere-prefs-ignored-listbox" flex="1" height="100"/>
+    <listbox
+      id="httpNowhere-prefs-ignored-listbox"
+      onselect="httpNowhere.prefs.patternSelected(document, window);"
+      flex="1"
+      height="100"/>
     <vbox>
-      <button label="Add"/>
-      <button label="Edit" disabled="true"/>
-      <button label="Delete" disabled="true"/>
+      <button label="Add" oncommand="httpNowhere.prefs.addIgnored(document, window);"/>
+      <button id="httpNowhere-prefs-editButton" label="Edit" oncommand="httpNowhere.prefs.editIgnored(document, window);"/>
+      <button id="httpNowhere-prefs-deleteButton" label="Delete" oncommand="httpNowhere.prefs.deleteIgnored(document, window);"/>
     </vbox>
   </hbox>
   <label>

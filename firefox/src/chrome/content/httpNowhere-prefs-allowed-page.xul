@@ -12,12 +12,15 @@
 
   <label class="header" value="These will never be blocked"/>
   <hbox flex="1">
-    <listbox id="httpNowhere-prefs-allowed-listbox" flex="1" height="100">
-    </listbox>
+    <listbox
+      id="httpNowhere-prefs-allowed-listbox"
+      onselect="httpNowhere.prefs.patternSelected(document, window);"
+      flex="1"
+      height="100"/>
     <vbox>
-      <button label="Add"/>
-      <button label="Edit" disabled="true"/>
-      <button label="Delete" disabled="true"/>
+      <button label="Add" oncommand="httpNowhere.prefs.addAllowed(document, window);"/>
+      <button id="httpNowhere-prefs-editButton" label="Edit" oncommand="httpNowhere.prefs.editAllowed(document, window);"/>
+      <button id="httpNowhere-prefs-deleteButton" label="Delete" oncommand="httpNowhere.prefs.deleteAllowed(document, window);"/>
     </vbox>
   </hbox>
   <label>

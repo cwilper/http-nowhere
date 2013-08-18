@@ -2,6 +2,8 @@ EXPORTED_SYMBOLS = ["httpNowhere"];
 
 Ci = Components.interfaces;
 
+Components.utils.import("resource://gre/modules/FileUtils.jsm");
+Components.utils.import("resource://gre/modules/NetUtil.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 
 var httpNowhere = {
@@ -31,6 +33,9 @@ var httpNowhere = {
       httpNowhere.prefs.setFirstRun(false);
     }
     httpNowhere.button.updateAppearance();
+
+    // load existing rules
+    httpNowhere.rules.load();
 
     // start observing all http requests
     Services.obs.addObserver(httpNowhere, "http-on-modify-request", false);
@@ -268,6 +273,11 @@ httpNowhere.prefs = {
     return true;
   },
 
+  patternSelected: function(document, window) {
+    document.getElementById('httpNowhere-prefs-editButton').setAttribute('disabled', 'false');
+    document.getElementById('httpNowhere-prefs-deleteButton').setAttribute('disabled', 'false');
+  },
+
   allowedPageLoaded: function(document, window) {
     httpNowhere.prefs._refreshList(
         document,
@@ -284,7 +294,181 @@ httpNowhere.prefs = {
     return true;
   },
 
+  _promptForPattern: function(document, window, text, suggest) {
+    var userpattern;
+    if (suggest) {
+      userpattern = window.prompt(text, suggest);
+    } else {
+      userpattern = window.prompt(text);
+    }
+    if (userpattern == null) {
+      return null;
+    }
+    userpattern = userpattern.trim();
+    var pattern = userpattern;
+    if (pattern.length == 0 || pattern === 'host:port/path') {
+      return httpNowhere.prefs._promptForPattern(document, window, text, suggest);
+    }
+    if (!pattern.startsWith("http://")) {
+      pattern = "http://" + pattern;
+    }
+    var j = pattern.indexOf('/');
+    var afterScheme = pattern.substr(j + 2);
+    j = afterScheme.indexOf('/');
+    if (j < 0) {
+      afterScheme = afterScheme + '/';
+      j = afterScheme.indexOf('/');
+    }
+    // http:///
+    var hostPort = afterScheme.substr(0, j).split(':');
+    if (hostPort.length > 2) {
+      window.alert("Too many colons in host:port");
+      return httpNowhere.prefs._promptForPattern(document, window, text, userpattern);
+    }
+    var host = hostPort[0].trim();
+    if (host.length == 0) {
+      window.alert("No host specified");
+      return httpNowhere.prefs._promptForPattern(document, window, text, userpattern);
+    }
+    var port = '80';
+    if (hostPort.length == 2) {
+      port = hostPort[1].trim();
+      if (port.length == 0) {
+        port = '80';
+      }
+    }
+    var path = afterScheme.substr(j);
+
+    return 'http://' + host + ":" + port + path;
+  },
+
+  addAllowed: function(document, window) {
+    var pattern = httpNowhere.prefs._promptForPattern(
+        document,
+        window,
+        'Add Allowed HTTP URL',
+        'host:port/path');
+    if (pattern != null) {
+      httpNowhere.rules.allowedPatterns.push(pattern);
+      httpNowhere.rules.save();
+      document.getElementById('httpNowhere-prefs-allowed-listbox').selectedIndex = -1;
+      httpNowhere.prefs._refreshList(
+          document,
+          document.getElementById('httpNowhere-prefs-allowed-listbox'),
+          httpNowhere.rules.allowedPatterns);
+    }
+  },
+
+  editAllowed: function(document, window) {
+    var oldPattern = document.getElementById('httpNowhere-prefs-allowed-listbox').selectedItem.value;
+    var j = oldPattern.indexOf('/');
+    var afterScheme = oldPattern.substr(j + 2);
+    var pattern = httpNowhere.prefs._promptForPattern(
+        document,
+        window,
+        'Edit Allowed HTTP URL',
+        afterScheme);
+    if (pattern != null) {
+      for (var i = 0; i < httpNowhere.rules.allowedPatterns.length; i++) {
+        var value = httpNowhere.rules.allowedPatterns[i];
+        if (value === oldPattern) {
+          httpNowhere.rules.allowedPatterns[i] = pattern;
+        }
+      }
+      httpNowhere.rules.save();
+      document.getElementById('httpNowhere-prefs-allowed-listbox').selectedIndex = -1;
+      httpNowhere.prefs._refreshList(
+          document,
+          document.getElementById('httpNowhere-prefs-allowed-listbox'),
+          httpNowhere.rules.allowedPatterns);
+    }
+  },
+
+  deleteAllowed: function(document, window) {
+    var oldPattern = document.getElementById('httpNowhere-prefs-allowed-listbox').selectedItem.value;
+    if (window.confirm("Delete Allowed HTTP URL?\n\n" + oldPattern)) {
+      var newArray = new Array();
+      for (var i = 0; i < httpNowhere.rules.allowedPatterns.length; i++) {
+        var value = httpNowhere.rules.allowedPatterns[i];
+        if (value != oldPattern) {
+          newArray.push(value);
+        }
+      }
+      httpNowhere.rules.allowedPatterns = newArray;
+      httpNowhere.rules.save();
+      document.getElementById('httpNowhere-prefs-allowed-listbox').selectedIndex = -1;
+      httpNowhere.prefs._refreshList(
+          document,
+          document.getElementById('httpNowhere-prefs-allowed-listbox'),
+          httpNowhere.rules.allowedPatterns);
+    }
+  },
+
+  addIgnored: function(document, window) {
+    var pattern = httpNowhere.prefs._promptForPattern(
+        document,
+        window,
+        'Add Ignored HTTP URL',
+        'host:port/path');
+    if (pattern != null) {
+      httpNowhere.rules.ignoredPatterns.push(pattern);
+      httpNowhere.rules.save();
+      document.getElementById('httpNowhere-prefs-ignored-listbox').selectedIndex = -1;
+      httpNowhere.prefs._refreshList(
+          document,
+          document.getElementById('httpNowhere-prefs-ignored-listbox'),
+          httpNowhere.rules.ignoredPatterns);
+    }
+  },
+
+  editIgnored: function(document, window) {
+    var oldPattern = document.getElementById('httpNowhere-prefs-ignored-listbox').selectedItem.value;
+    var j = oldPattern.indexOf('/');
+    var afterScheme = oldPattern.substr(j + 2);
+    var pattern = httpNowhere.prefs._promptForPattern(
+        document,
+        window,
+        'Edit Ignored HTTP URL',
+        afterScheme);
+    if (pattern != null) {
+      for (var i = 0; i < httpNowhere.rules.ignoredPatterns.length; i++) {
+        var value = httpNowhere.rules.ignoredPatterns[i];
+        if (value === oldPattern) {
+          httpNowhere.rules.ignoredPatterns[i] = pattern;
+        }
+      }
+      httpNowhere.rules.save();
+      document.getElementById('httpNowhere-prefs-ignored-listbox').selectedIndex = -1;
+      httpNowhere.prefs._refreshList(
+          document,
+          document.getElementById('httpNowhere-prefs-ignored-listbox'),
+          httpNowhere.rules.ignoredPatterns);
+    }
+  },
+
+  deleteIgnored: function(document, window) {
+    var oldPattern = document.getElementById('httpNowhere-prefs-ignored-listbox').selectedItem.value;
+    if (window.confirm("Delete Allowed HTTP URL?\n\n" + oldPattern)) {
+      var newArray = new Array();
+      for (var i = 0; i < httpNowhere.rules.ignoredPatterns.length; i++) {
+        var value = httpNowhere.rules.ignoredPatterns[i];
+        if (value != oldPattern) {
+          newArray.push(value);
+        }
+      }
+      httpNowhere.rules.ignoredPatterns = newArray;
+      httpNowhere.rules.save();
+      document.getElementById('httpNowhere-prefs-ignored-listbox').selectedIndex = -1;
+      httpNowhere.prefs._refreshList(
+          document,
+          document.getElementById('httpNowhere-prefs-ignored-listbox'),
+          httpNowhere.rules.ignoredPatterns);
+    }
+  },
+
   _refreshList: function(document, listbox, patterns) {
+    document.getElementById('httpNowhere-prefs-editButton').setAttribute('disabled', 'true');
+    document.getElementById('httpNowhere-prefs-deleteButton').setAttribute('disabled', 'true');
     while (listbox.hasChildNodes()) {
       listbox.removeChild(listbox.firstChild);
     }
@@ -323,6 +507,7 @@ httpNowhere.prefs = {
       var path = afterScheme.substr(j);
 
       var listitem = document.createElement('listitem');
+      listitem.setAttribute('value', patterns[i]);
       var hostCell = document.createElement('listcell');
       hostCell.setAttribute('label', host + ' ');
       listitem.appendChild(hostCell);
@@ -408,6 +593,17 @@ httpNowhere.recent = {
   },
 
   refresh: function() {
+    // remove all urls that match any allowed or ignored urls
+    for (var hostname in httpNowhere.recent.hostInfo) {
+      var hostInfo = httpNowhere.recent.hostInfo[hostname];
+      for (var url in hostInfo.urlInfo) {
+        //TODO: check against allowed/ignored and remove
+      }
+      // TODO: remove hostinfo if no more urls for this host
+      // TODO: update hostinfo counts..
+    }
+
+    // remove oldest urlinfo and hostinfo if needed to fit within maximums
     httpNowhere.recent.dropOldHostInfo();
     for (var hostname in httpNowhere.recent.hostInfo) {
       httpNowhere.recent.dropOldUrlInfo(httpNowhere.recent.hostInfo[hostname]);
@@ -424,14 +620,46 @@ httpNowhere.recent = {
 
 httpNowhere.rules = {
 
-  allowedPatterns: ['http://imgur.com:80/*', 'http://*.imgur.com:80/*'],
+  filename: "httpNowhere-rules.json",
 
-  ignoredPatterns: ['http://ocsp.*:80/*', 'http://*.adzerk.net:80/*'],
+  allowedPatterns: [],
+
+  ignoredPatterns: [],
 
   load: function() {
+    var file = FileUtils.getFile("ProfD", [httpNowhere.rules.filename]);
+    if (file.exists()) {
+      NetUtil.asyncFetch(file, function(inputStream, status) {
+        if (!Components.isSuccessCode(status)) {
+          Services.console.logStringMessage("ERROR: Unable to load " + httpNowhere.rules.filename + " (status code " + status + ")");
+        } else {
+          var json = NetUtil.readInputStreamToString(inputStream, inputStream.available());
+          var rules = JSON.parse(json);
+          httpNowhere.rules.allowedPatterns = rules.allowedPatterns;
+          httpNowhere.rules.ignoredPatterns = rules.ignoredPatterns;
+        }
+      });
+    }
   },
 
   save: function() {
+    var json = JSON.stringify({
+      allowedPatterns: httpNowhere.rules.allowedPatterns,
+      ignoredPatterns: httpNowhere.rules.ignoredPatterns
+    });
+
+    var file = FileUtils.getFile("ProfD", [httpNowhere.rules.filename]);
+    var ostream = FileUtils.openSafeFileOutputStream(file);
+    var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].
+        createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+    converter.charset = "UTF-8";
+    var istream = converter.convertToInputStream(json);
+
+    NetUtil.asyncCopy(istream, ostream, function(status) {
+      if (!Components.isSuccessCode(status)) {
+        Services.console.logStringMessage("ERROR: Unable to save " + httpNowhere.rules.filename + " (status code " + status + ")");
+      }
+    });
   },
 
   isAllowed: function(uri) {
@@ -457,7 +685,6 @@ httpNowhere.rules = {
       portNum = 80;
     }
     var normalizedUri = uri.scheme + '://' + uri.host + ':' + portNum + uri.path;
-    Services.console.logStringMessage(normalizedUri);
 
     var regExp;
     if (pattern.indexOf('~') == 0) {
@@ -471,7 +698,6 @@ httpNowhere.rules = {
 
   _patternToRegExp: function(pattern) {
     var re = '^' + pattern.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*+/g, '.*') + '$';
-    Services.console.logStringMessage(pattern + " -> " + re);
     return new RegExp(re);
   }
 };

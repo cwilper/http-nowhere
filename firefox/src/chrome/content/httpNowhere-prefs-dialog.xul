@@ -31,12 +31,12 @@
           selected="true"/>
       <listitem
           class="listitem-iconic"
-          label="Allowed URLs"
+          label="Allowed HTTP URLs"
           image="chrome://http-nowhere/skin/httpNowhere-allow.png"
           value="chrome://http-nowhere/content/httpNowhere-prefs-allowed-page.xul"/>
       <listitem
           class="listitem-iconic"
-          label="Ignored URLs"
+          label="Ignored HTTP URLs"
           image="chrome://http-nowhere/skin/httpNowhere-ignore.png"
           value="chrome://http-nowhere/content/httpNowhere-prefs-ignored-page.xul"/>
     </listbox>
