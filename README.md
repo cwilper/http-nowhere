@@ -27,6 +27,10 @@ HTTP Nowhere has also been tested with the Tor Browser Bundle (TBB), and can be 
 
 Changelog
 --
+**v2.0.2**
+- Changed initial install location of button to right of urlbar based on review feedback
+- Bugfix; added small (16px) versions of icons for small icon mode / non-Gnome browsers
+
 **v2.0.1**
 - Bugfix; removed use of non-widely supported Javascript string.startsWith method (problematic for Firefox 4).
 

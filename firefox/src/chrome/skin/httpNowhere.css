@@ -6,12 +6,24 @@
   list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-enabled.png");
 }
 
+toolbar[iconsize="small"] #httpNowhere-button > .httpNowhere-button {
+  list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-enabled-small.png");
+}
+
 #httpNowhere-button[status="blocking"] > .httpNowhere-button {
   list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-blocking.png");
 }
 
+toolbar[iconsize="small"] #httpNowhere-button[status="blocking"] > .httpNowhere-button {
+  list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-blocking-small.png");
+}
+
 #httpNowhere-button[status="disabled"] > .httpNowhere-button {
   list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-disabled.png");
+}
+
+toolbar[iconsize="small"] #httpNowhere-button[status="disabled"] > .httpNowhere-button {
+  list-style-image: url("chrome://http-nowhere/skin/httpNowhere-button-disabled-small.png");
 }
 
 #httpNowhere-button-badge {

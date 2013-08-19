@@ -44,6 +44,7 @@
       <dialogheader id="httpNowhere-prefs-dialogheader"/>
       <iframe
           id="httpNowhere-prefs-iframe"
+          src="chrome://http-nowhere/content/httpNowhere-prefs-general-page.xul"
           flex="1"/>
     </vbox>
   </hbox>

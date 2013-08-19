@@ -14,19 +14,14 @@ var httpNowhere = {
   init: function() {
     // add the button and show the installed message, if needed
     if (httpNowhere.prefs.isFirstRun()) {
-      // put the button on the toolbar if not already there
+      // put the button on the toolbar (far right) if not already there
       var navbar = httpNowhere._getWindow().document.getElementById("nav-bar");
       var curSet = navbar.currentSet;
-        if (curSet.indexOf("httpNowhere-button") == -1) {
-         // put it just before the urlbar if present
-         var set = curSet.replace(/urlbar-container/, "httpNowhere-button,urlbar-container");
-         if (set.indexOf("httpNowhere-button") == -1) {
-           // otherwise, put it on the far right
-           set = curSet + ',httpNowhere-button';
-         }
-         navbar.setAttribute('currentset', set);
-         navbar.currentSet = set;
-         httpNowhere._getWindow().document.persist('nav-bar', 'currentset');
+      if (curSet.indexOf("httpNowhere-button") == -1) {
+        var set = curSet + ',httpNowhere-button';
+        navbar.setAttribute('currentset', set);
+        navbar.currentSet = set;
+        httpNowhere._getWindow().document.persist('nav-bar', 'currentset');
       }
       // give a quick one-time usage message
       Services.prompt.alert(null, "HTTP Nowhere is now installed", "Click the lock button to disable, enable, and configure it.\n\nWhile red (enabled), unencrypted web requests will fail unless allowed explicitly.");
