@@ -312,7 +312,7 @@ httpNowhere.prefs = {
     if (pattern.length == 0 || pattern === 'host:port/path') {
       return httpNowhere.prefs._promptForPattern(document, window, title, suggest);
     }
-    if (!pattern.startsWith("http://")) {
+    if (pattern.indexOf("http://") != 0) {
       pattern = "http://" + pattern;
     }
     var j = pattern.indexOf('/');
