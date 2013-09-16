@@ -11,29 +11,40 @@
   </script>
 
   <label class="header" value="Recently Blocked"/>
-    <vbox>
-      <hbox align="center">
-        <label value="Show the latest"/>
-        <textbox
-            id="httpNowhere-prefs-maxRecentlyBlockedHosts"
-            type="number"
-            size="2"
-            min="1"
-            max="99"
-            onchange="httpNowhere.prefs.setMaxRecentlyBlockedHosts(this.value)"/>
-        <label value="hosts"/>
-      </hbox>
-      <hbox align="center">
-        <label value="Show the latest"/>
-        <textbox
-            id="httpNowhere-prefs-maxRecentlyBlockedURLsPerHost"
-            type="number"
-            size="2"
-            min="1"
-            max="99"
-            onchange="httpNowhere.prefs.setMaxRecentlyBlockedURLsPerHost(this.value)"/>
-        <label value="distinct URLs per host"/>
-      </hbox>
-    </vbox>
+  <vbox>
+    <hbox align="center">
+      <label value="Show the latest"/>
+      <textbox
+          id="httpNowhere-prefs-maxRecentlyBlockedHosts"
+          type="number"
+          size="2"
+          min="1"
+          max="99"
+          onchange="httpNowhere.prefs.setMaxRecentlyBlockedHosts(this.value)"/>
+      <label value="hosts"/>
+    </hbox>
+    <hbox align="center">
+      <label value="Show the latest"/>
+      <textbox
+          id="httpNowhere-prefs-maxRecentlyBlockedURLsPerHost"
+          type="number"
+          size="2"
+          min="1"
+          max="99"
+          onchange="httpNowhere.prefs.setMaxRecentlyBlockedURLsPerHost(this.value)"/>
+      <label value="distinct URLs per host"/>
+    </hbox>
+  </vbox>
 
+  <separator class="groove-thin"/>
+
+  <label class="header" value="Redirecting"/>
+  <vbox>
+    <hbox align="center">
+      <checkbox
+          id="httpNowhere-prefs-autoRedirect"
+          label="Auto-redirect to HTTPS instead of blocking"
+          oncommand="httpNowhere.prefs.setAutoRedirect(this.checked)"/>
+    </hbox>
+  </vbox>
 </page>

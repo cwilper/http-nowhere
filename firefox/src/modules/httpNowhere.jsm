@@ -40,21 +40,28 @@ var httpNowhere = {
     if (topic == "http-on-modify-request" && httpNowhere.prefs.isEnabled()) {
       var request = subject.QueryInterface(Ci.nsIHttpChannel);
       if (!httpNowhere.rules.isAllowed(request.URI)) {
-        // abort the request
-        request.cancel(Components.results.NS_ERROR_ABORT);
-        if (!httpNowhere.rules.isIgnored(request.URI)) {
-          // signal that a block has occurred by briefly changing the badge
-          var button = httpNowhere._getWindow().document.getElementById("httpNowhere-button");
-          if (button != null) {
-            if (button.getAttribute('status') != 'blocking') {
-              button.setAttribute('status', 'blocking');
-              httpNowhere._getWindow().setTimeout(function() {
-                httpNowhere.button.updateAppearance();
-              }, 500);
+        if (httpNowhere.rules.isIgnored(request.URI)) {
+          request.cancel(Components.results.NS_ERROR_ABORT);
+        } else {
+          var redirectUri = httpNowhere.rules.getRedirectUri(request.URI);
+          if (redirectUri != null) {
+            Services.console.logStringMessage("Redirecting " + request.URI.spec + " to " + redirectUri.spec);
+            request.redirectTo(redirectUri);
+          } else {
+            request.cancel(Components.results.NS_ERROR_ABORT);
+            // signal that a block has occurred by briefly changing the badge
+            var button = httpNowhere._getWindow().document.getElementById("httpNowhere-button");
+            if (button != null) {
+              if (button.getAttribute('status') != 'blocking') {
+                button.setAttribute('status', 'blocking');
+                httpNowhere._getWindow().setTimeout(function() {
+                  httpNowhere.button.updateAppearance();
+                }, 500);
+              }
             }
+            // update the recent list
+            httpNowhere.recent.addURI(request.URI);
           }
-          // update the recent list
-          httpNowhere.recent.addURI(request.URI);
         }
       }
     }
@@ -248,6 +255,14 @@ httpNowhere.prefs = {
     httpNowhere.prefs.branch.setIntPref("maxRecentlyBlockedURLsPerHost", value);
   },
 
+  getAutoRedirect: function() {
+    return httpNowhere.prefs.branch.getBoolPref("autoRedirect");
+  },
+
+  setAutoRedirect: function(value) {
+    httpNowhere.prefs.branch.setBoolPref("autoRedirect", value);
+  },
+
   pageSelected: function(document, window) {
     var selectedItem = document.getElementById('httpNowhere-prefs-list').selectedItem;
 
@@ -267,6 +282,7 @@ httpNowhere.prefs = {
   generalPageLoaded: function(document, window) {
     document.getElementById('httpNowhere-prefs-maxRecentlyBlockedHosts').value = httpNowhere.prefs.getMaxRecentlyBlockedHosts();
     document.getElementById('httpNowhere-prefs-maxRecentlyBlockedURLsPerHost').value = httpNowhere.prefs.getMaxRecentlyBlockedURLsPerHost();
+    document.getElementById('httpNowhere-prefs-autoRedirect').checked = httpNowhere.prefs.getAutoRedirect();
     return true;
   },
 
@@ -342,7 +358,6 @@ httpNowhere.prefs = {
 
   addAllow: function(document, window, menuitem) {
     var suggest = menuitem.value;
-    Services.console.logStringMessage("addAllow suggest=" + suggest);
     if (suggest.indexOf("http://") != 0) {
       suggest = suggest + ":*/*";
     } else {
@@ -363,7 +378,6 @@ httpNowhere.prefs = {
 
   addIgnore: function(document, window, menuitem) {
     var suggest = menuitem.value;
-    Services.console.logStringMessage("addIgnore suggest=" + suggest);
     if (suggest.indexOf("http://") != 0) {
       suggest = suggest + ":*/*";
     } else {
@@ -637,14 +651,12 @@ httpNowhere.recent = {
     for (var hostname in httpNowhere.recent.hostInfo) {
       var hostInfo = httpNowhere.recent.hostInfo[hostname];
       for (var url in hostInfo.urlInfo) {
-        Services.console.logStringMessage("Checking if " + url + " needs to be removed");
         // remove this urlInfo from this hostInfo if it's no longer blocked
         var uri = Services.io.newURI(url, null, null);
         if (httpNowhere.rules.isAllowed(uri) || httpNowhere.rules.isIgnored(uri)) {
           var oldUrlInfo = hostInfo.urlInfo[url];
           delete hostInfo.urlInfo[url];
           hostInfo.blockCount -= oldUrlInfo.blockCount;
-          Services.console.logStringMessage("Removed " + url);
         }
       }
       if (Object.keys(hostInfo.urlInfo).length == 0) {
@@ -719,6 +731,15 @@ httpNowhere.rules = {
 
   isIgnored: function(uri) {
     return httpNowhere.rules._matchesAny(uri, httpNowhere.rules.ignoredPatterns);
+  },
+
+  getRedirectUri: function(uri) {
+    if (uri.scheme == 'https') return null;
+    if (httpNowhere.prefs.getAutoRedirect()) {
+      var url = 'https://' + uri.host + uri.path;
+      return Services.io.newURI(url, null, null);
+    }
+    return null;
   },
 
   _matchesAny: function(uri, patterns) {
