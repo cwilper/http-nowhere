@@ -1,6 +1,8 @@
+var n = 0;
+
 chrome.browserAction.onClicked.addListener(function() {
-  console.log('popup goes here..');
+  n += 1;
+  chrome.browserAction.setBadgeText({"text": n + ""});
 });
 
-chrome.browserAction.setBadgeText({"text":"10"});
-chrome.browserAction.setBadgeBackgroundColor({"color":"#dd0"});
+chrome.browserAction.setBadgeBackgroundColor({"color":"#ee0"});
