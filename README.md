@@ -3,11 +3,11 @@ HTTP Nowhere
 
 A browser extension to block unencrypted web traffic for added security.
 
-This extension adds a button to your Firefox toolbar that lets you disable all unencrypted web requests and only permit those you choose. When URLs are blocked, an indicator appears on the button and you can then choose to allow or ignore those URLs. You can also manually manage your allowed and ignored URLs and quickly switch between enabled (red) and disabled (gray) mode.
+This extension adds a button to your Firefox toolbar that lets you disable all unencrypted web requests and only permit those you choose. When URLs are blocked, an indicator appears on the button and you can then choose to allow or ignore them. You can also opt to try redirecting all non-secure urls to HTTPS.
 
 Motivation
 --
-One of the most effective ways to improve your privacy on the web is to opt for encrypted communication whenever possible. By blocking plain HTTP web traffic by default, this extension gives you the power to decide exactly which unencrypted URLs, if any, you will permit your browser to make requests to on your behalf.
+One of the most effective ways to improve your privacy on the web is to opt for encrypted communication whenever possible. By blocking plain HTTP web traffic by default, this extension gives you the power to decide exactly which unencrypted URLs you will permit your browser to request.
 
 Screenshots
 --
@@ -27,6 +27,11 @@ HTTP Nowhere has also been tested with the Tor Browser Bundle (TBB), and can be 
 
 Changelog
 --
+**v2.1.0**
+- For Firefox 20+, automatically tries https for hostnames entered in the urlbar
+- For Firefox 20+, added new option to auto-redirect to HTTPS instead of blocking
+- Cleaned up some extraneous console logging
+
 **v2.0.2**
 - Changed initial install location of button to right of urlbar based on review feedback
 - Bugfix; added small (16px) versions of icons for small icon mode / non-Gnome browsers
