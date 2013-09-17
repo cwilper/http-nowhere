@@ -44,8 +44,7 @@ var httpNowhere = {
           request.cancel(Components.results.NS_ERROR_ABORT);
         } else {
           var redirectUri = httpNowhere.rules.getRedirectUri(request.URI);
-          if (redirectUri != null) {
-            Services.console.logStringMessage("Redirecting " + request.URI.spec + " to " + redirectUri.spec);
+          if (redirectUri != null && httpNowhere.isRedirectSupported()) {
             request.redirectTo(redirectUri);
           } else {
             request.cancel(Components.results.NS_ERROR_ABORT);
@@ -65,6 +64,13 @@ var httpNowhere = {
         }
       }
     }
+  },
+
+  isRedirectSupported: function() {
+    // redirect only supported with Gecko20/Firefox20
+    var actualVersion = Services.appinfo.version;
+    var requiredVersion = "20.0";
+    return Services.vc.compare(actualVersion, requiredVersion) >= 0;
   },
 
   toggleEnabled: function() {
@@ -282,7 +288,12 @@ httpNowhere.prefs = {
   generalPageLoaded: function(document, window) {
     document.getElementById('httpNowhere-prefs-maxRecentlyBlockedHosts').value = httpNowhere.prefs.getMaxRecentlyBlockedHosts();
     document.getElementById('httpNowhere-prefs-maxRecentlyBlockedURLsPerHost').value = httpNowhere.prefs.getMaxRecentlyBlockedURLsPerHost();
-    document.getElementById('httpNowhere-prefs-autoRedirect').checked = httpNowhere.prefs.getAutoRedirect();
+    if (httpNowhere.isRedirectSupported()) {
+      document.getElementById('httpNowhere-prefs-autoRedirect').checked = httpNowhere.prefs.getAutoRedirect();
+    } else {
+      document.getElementById('httpNowhere-prefs-autoRedirect').setAttribute('disabled', 'true');
+      document.getElementById('httpNowhere-prefs-autoRedirectHeader').value = 'Auto-Redirect (Upgrade to Firefox 20.0+ to enable)';
+    }
     return true;
   },
 
@@ -683,6 +694,8 @@ httpNowhere.recent = {
 
 httpNowhere.rules = {
 
+  _recentRedirectUris: { },
+
   filename: "httpNowhere-rules.json",
 
   allowedPatterns: [],
@@ -735,9 +748,47 @@ httpNowhere.rules = {
 
   getRedirectUri: function(uri) {
     if (uri.scheme == 'https') return null;
-    if (httpNowhere.prefs.getAutoRedirect()) {
-      var url = 'https://' + uri.host + uri.path;
-      return Services.io.newURI(url, null, null);
+
+    var barValue = httpNowhere._getWindow().gURLBar.value;
+    var remainder = uri.host + uri.path;
+
+    // never redirect OCSP urls
+    if (remainder.indexOf("ocsp") != -1) return null;
+
+    if (httpNowhere.prefs.getAutoRedirect() || remainder.indexOf(barValue) == 0) {
+      var redirectUri = Services.io.newURI('https://' + remainder, null, null);
+
+      // detect redirect loop; if same url has already been redirected
+      // twice in the last four seconds, don't redirect again
+
+      var now = new Date().getTime();
+      var before = now - 4000;
+
+      // remove old dates first
+      for (var u in httpNowhere.rules._recentRedirectUris) {
+        var dates = httpNowhere.rules._recentRedirectUris[u];
+        while (dates.length > 0 && dates[0] < before) {
+          dates.shift();
+        }
+        if (dates.length == 0) {
+          delete httpNowhere.rules._recentRedirectUris[u];
+        }
+      }
+
+      // add this one
+      var dates = httpNowhere.rules._recentRedirectUris[remainder];
+      if (dates == null) {
+        dates = new Array();
+        httpNowhere.rules._recentRedirectUris[remainder] = dates;
+      }
+      dates.push(now);
+
+      // if this was the second, block it
+      if (dates.length > 2) {
+        return null;
+      }
+
+      return redirectUri;
     }
     return null;
   },

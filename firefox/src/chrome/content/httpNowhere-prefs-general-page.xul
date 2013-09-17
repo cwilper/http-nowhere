@@ -38,12 +38,12 @@
 
   <separator class="groove-thin"/>
 
-  <label class="header" value="Redirecting"/>
+  <label id="httpNowhere-prefs-autoRedirectHeader" class="header" value="Auto-Redirect"/>
   <vbox>
     <hbox align="center">
       <checkbox
           id="httpNowhere-prefs-autoRedirect"
-          label="Auto-redirect to HTTPS instead of blocking"
+          label="Always try HTTPS instead of blocking"
           oncommand="httpNowhere.prefs.setAutoRedirect(this.checked)"/>
     </hbox>
   </vbox>

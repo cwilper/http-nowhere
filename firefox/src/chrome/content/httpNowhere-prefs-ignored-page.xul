@@ -10,7 +10,7 @@
     Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
   </script>
 
-  <label class="header" value="These will never alert or show up under Recently Blocked"/>
+  <label class="header" value="These will never be requested or show up under Recently Blocked"/>
   <hbox flex="1">
     <listbox
       id="httpNowhere-prefs-ignored-listbox"

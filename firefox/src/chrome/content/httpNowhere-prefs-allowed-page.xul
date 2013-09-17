@@ -10,7 +10,7 @@
     Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
   </script>
 
-  <label class="header" value="These will never be blocked"/>
+  <label class="header" value="These will never be blocked or redirected"/>
   <hbox flex="1">
     <listbox
       id="httpNowhere-prefs-allowed-listbox"
