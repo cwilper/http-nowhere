@@ -5,4 +5,10 @@ chrome.browserAction.onClicked.addListener(function() {
   chrome.browserAction.setBadgeText({"text": n + ""});
 });
 
-chrome.browserAction.setBadgeBackgroundColor({"color":"#ee0"});
+chrome.webRequest.onBeforeRequest.addListener(function(details) {
+  n += 1;
+  chrome.browserAction.setBadgeText({"text": n + ""});
+  console.log(details.url);
+}, {urls: ["http://*/*"]}, null);
+
+chrome.browserAction.setBadgeBackgroundColor({"color":"#cc2"});

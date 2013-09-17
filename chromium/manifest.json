@@ -17,5 +17,9 @@
       "19": "images/icon19-on.png",
       "38": "images/icon38-on.png"
     }
-  }
+  },
+  "permissions": [
+    "webRequest",
+    "http://*/*"
+  ]
 }
