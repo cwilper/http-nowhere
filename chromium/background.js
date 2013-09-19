@@ -11,4 +11,4 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
   console.log(details.url);
 }, {urls: ["http://*/*"]}, null);
 
-chrome.browserAction.setBadgeBackgroundColor({"color":"#cc2"});
+chrome.browserAction.setBadgeBackgroundColor({"color":"#999"});
