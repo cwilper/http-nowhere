@@ -48,14 +48,20 @@ var httpNowhere = {
             request.redirectTo(redirectUri);
           } else {
             request.cancel(Components.results.NS_ERROR_ABORT);
-            // signal that a block has occurred by briefly changing the badge
+            // signal that a block has occurred by briefly changing the button
             var button = httpNowhere._getWindow().document.getElementById("httpNowhere-button");
             if (button != null) {
               if (button.getAttribute('status') != 'blocking') {
-                button.setAttribute('status', 'blocking');
-                httpNowhere._getWindow().setTimeout(function() {
-                  httpNowhere.button.updateAppearance();
-                }, 500);
+                if (httpNowhere.prefs.getFlashButtonOnBlock()) {
+                  button.setAttribute('status', 'blocking');
+                  httpNowhere._getWindow().setTimeout(function() {
+                    httpNowhere.button.updateAppearance();
+                  }, 500);
+                } else {
+                  httpNowhere._getWindow().setTimeout(function() {
+                    httpNowhere.button.updateAppearance();
+                  }, 0);
+                }
               }
             }
             // update the recent list
@@ -111,7 +117,7 @@ httpNowhere.button = {
         }, 250);
       } else if (httpNowhere.prefs.isEnabled()) {
         buttonElement.setAttribute('status', 'enabled');
-        if (httpNowhere.recent.blockCount == 0) {
+        if (httpNowhere.recent.blockCount == 0 || !httpNowhere.prefs.getShowBlockCountOnButton()) {
           buttonElement.setAttribute('badgeLabel', '');
         } else {
           buttonElement.setAttribute('badgeLabel', httpNowhere.recent.blockCount);
@@ -245,6 +251,22 @@ httpNowhere.prefs = {
     httpNowhere.prefs.branch.setBoolPref("firstRun", value);
   },
 
+  getFlashButtonOnBlock: function() {
+    return httpNowhere.prefs.branch.getBoolPref("flashButtonOnBlock");
+  },
+
+  setFlashButtonOnBlock: function(value) {
+    httpNowhere.prefs.branch.setBoolPref("flashButtonOnBlock", value);
+  },
+
+  getShowBlockCountOnButton: function() {
+    return httpNowhere.prefs.branch.getBoolPref("showBlockCountOnButton");
+  },
+
+  setShowBlockCountOnButton: function(value) {
+    httpNowhere.prefs.branch.setBoolPref("showBlockCountOnButton", value);
+  },
+
   getMaxRecentlyBlockedHosts: function() {
     return httpNowhere.prefs.branch.getIntPref("maxRecentlyBlockedHosts");
   },
@@ -288,6 +310,8 @@ httpNowhere.prefs = {
   generalPageLoaded: function(document, window) {
     document.getElementById('httpNowhere-prefs-maxRecentlyBlockedHosts').value = httpNowhere.prefs.getMaxRecentlyBlockedHosts();
     document.getElementById('httpNowhere-prefs-maxRecentlyBlockedURLsPerHost').value = httpNowhere.prefs.getMaxRecentlyBlockedURLsPerHost();
+    document.getElementById('httpNowhere-prefs-flashButtonOnBlock').checked = httpNowhere.prefs.getFlashButtonOnBlock();
+    document.getElementById('httpNowhere-prefs-showBlockCountOnButton').checked = httpNowhere.prefs.getShowBlockCountOnButton();
     if (httpNowhere.isRedirectSupported()) {
       document.getElementById('httpNowhere-prefs-autoRedirect').checked = httpNowhere.prefs.getAutoRedirect();
     } else {

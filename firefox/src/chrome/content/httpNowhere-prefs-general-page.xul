@@ -10,6 +10,24 @@
     Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
   </script>
 
+  <label class="header" value="Appearance"/>
+  <vbox>
+    <hbox align="center">
+      <checkbox
+          id="httpNowhere-prefs-flashButtonOnBlock"
+          label="Flash button yellow whenever a URL is blocked"
+          oncommand="httpNowhere.prefs.setFlashButtonOnBlock(this.checked)"/>
+    </hbox>
+    <hbox align="center">
+      <checkbox
+          id="httpNowhere-prefs-showBlockCountOnButton"
+          label="Show recently blocked count on button"
+          oncommand="httpNowhere.prefs.setShowBlockCountOnButton(this.checked)"/>
+    </hbox>
+  </vbox>
+
+  <separator class="groove-thin"/>
+
   <label class="header" value="Recently Blocked"/>
   <vbox>
     <hbox align="center">
@@ -18,7 +36,7 @@
           id="httpNowhere-prefs-maxRecentlyBlockedHosts"
           type="number"
           size="2"
-          min="1"
+          min="0"
           max="99"
           onchange="httpNowhere.prefs.setMaxRecentlyBlockedHosts(this.value)"/>
       <label value="hosts"/>

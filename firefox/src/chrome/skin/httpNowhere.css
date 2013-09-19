@@ -27,19 +27,20 @@ toolbar[iconsize="small"] #httpNowhere-button[status="disabled"] > .httpNowhere-
 }
 
 #httpNowhere-button-badge {
-  margin: 3px -12px 0 -8px;
+  margin: 3px -10px 0 -8px;
   display: block;
   -moz-box-sizing: border-box;
 }
 
 #httpNowhere-button-badge-label {
   -moz-box-sizing: border-box;
-  font-size: 10px;
-  color: #000;
-  background-color: yellow;
+  font-size: 9px;
+  color: #fff;
+  background-color: #999;
   border-width: 1px;
   border-style: solid;
-  padding: 1px 1px 1px 1px;
+  border-color: black;
+  padding: 0px;
   visibility: hidden;
 }
 
