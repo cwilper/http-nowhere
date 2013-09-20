@@ -1,10 +1,5 @@
 var n = 0;
 
-chrome.browserAction.onClicked.addListener(function() {
-  n += 1;
-  chrome.browserAction.setBadgeText({'text': n + ''});
-});
-
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
   n += 1;
   chrome.browserAction.setBadgeText({'text': n + ''});
@@ -14,3 +9,9 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 }, {urls: ['http://*/*']}, ['blocking']);
 
 chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});
+
+chrome.browserAction.setPopup({'popup':'popup.html'});
+
+function say(message) {
+  console.log(message);
+}
