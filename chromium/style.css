@@ -1,0 +1,106 @@
+body {
+  background: #fff;
+  font-family: sans-serif;
+  font-size: 14px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.page-title {
+  background: #ddd;
+  font-size: 18px;
+  border-bottom: 1px solid black;
+  padding-left: 23px;
+  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 0px;
+  vertical-align: bottom;
+}
+
+.page-title img {
+  height: 26px;
+  width: 26px;
+  vertical-align: top;
+}
+
+.page-body {
+  margin: 20px;
+}
+
+.options-menubox {
+  position: absolute;
+  float: left;
+  width: 198px;
+  border: 1px solid black;
+  margin-right: 15px;
+}
+
+.options-pane {
+  position: absolute;
+  left: 240px;
+  top: 70px;
+  visibility: hidden;
+}
+
+.options-pane-active {
+  visibility: visible;
+}
+
+.options-section {
+  margin-bottom: 16px;
+}
+
+.options-section-title {
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+
+.options-section-row {
+  padding-left: 10px;
+  padding-bottom: 4px;
+}
+
+.options-bottom {
+  border-top: 1px solid gray;
+  padding-top: 10px;
+}
+
+.options-bottom button {
+  float:right;
+  font-size: 14px;
+}
+
+.menuitem {
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  vertical-align: bottom;
+  padding-top: 4px;
+  padding-bottom: 6px;
+  padding-left: 4px;
+  padding-right: 4px;
+  width: 190px;
+  margin-top: 0px;
+}
+
+.menuitem-selected {
+  background: #78c;
+  color: #fff;
+}
+
+.menuitem:hover {
+  background: #abf;
+}
+
+.menuitem-selected:hover {
+  background: #78c;
+}
+
+.menuitem img {
+  padding: 1px;
+  margin-right: 5px;
+  height: 16px;
+  width: 16px;
+  vertical-align: top;
+}

@@ -5,7 +5,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
   chrome.browserAction.setBadgeText({'text': n + ''});
   var newUrl = 'https' + details.url.substring(4);
   console.log('Redirecting to ' + newUrl);
-  return {'redirectUrl': newUrl};
+//  return {'redirectUrl': newUrl};
 }, {urls: ['http://*/*']}, ['blocking']);
 
 chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});

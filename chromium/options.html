@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title>HTTP Nowhere Options</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+      body {
+        background: #eee;
+      }
+    </style>
+    <script src="options.js"></script>
+  </head>
+  <body>
+    <div class="page-title">
+      <img src="images/icon38-on.png">
+      HTTP Nowhere Options
+    </div>
+    <div class="page-body">
+      <div class="options-menubox">
+        <div id="general" class="menuitem">
+          <img src="images/httpNowhere-prefs.png">
+          General Settings
+        </div>
+        <div id="allowed" class="menuitem">
+          <img src="images/httpNowhere-allow.png">
+          Allowed HTTP URLs
+        </div>
+        <div id="ignored" class="menuitem">
+          <img src="images/httpNowhere-ignore.png">
+          Ignored HTTP URLs
+        </div>
+      </div>
+      <div id="generalPane" class="options-pane">
+        <div class="options-section">
+          <div class="options-section-title">Appearance</div>
+          <div class="options-section-row">
+            <label><input type="checkbox"> Flash button yellow whenever a URL is blocked</label>
+          </div>
+          <div class="options-section-row">
+            <label><input type="checkbox"> Show recently blocked count on button</label>
+          </div>
+        </div>
+        <div class="options-section">
+          <div class="options-section-title">Recently Blocked</div>
+          <div class="options-section-row">
+            Show the latest <button>-</button><input type="text" size="2" value="20"/><button>+</button> hosts
+          </div>
+          <div class="options-section-row">
+            Show the latest <button>-</button><input type="text" size="2" value="20"/><button>+</button> URLs per host
+          </div>
+        </div>
+        <div class="options-section">
+          <div class="options-section-title">Auto-Redirect</div>
+          <div class="options-section-row">
+            <label><input type="checkbox"> Always try HTTPS instead of blocking</label>
+          </div>
+        </div>
+        <div class="options-bottom">
+          <button class="closeButton">Done</button>
+        </div>
+      </div>
+      <div id="allowedPane" class="options-pane">
+        <div class="options-section">
+          <div class="options-section-title">These will never be blocked or redirected</div>
+        </div>
+        <div class="options-bottom">
+          <button class="closeButton">Done</button>
+        </div>
+      </div>
+      <div id="ignoredPane" class="options-pane">
+        <div class="options-section">
+          <div class="options-section-title">These will never be requested or show up under Recently Blocked</div>
+        </div>
+        <div class="options-bottom">
+          <button class="closeButton">Done</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -3,7 +3,7 @@
 
   "name": "HTTP Nowhere",
   "description": "Block unencrypted web traffic for added security.",
-  "version": "2.0.2",
+  "version": "2.2.0",
   "icons": {
     "16": "images/icon16-on.png",
     "48": "images/icon48-on.png",
@@ -22,5 +22,6 @@
     "webRequest",
     "webRequestBlocking",
     "http://*/*"
-  ]
+  ],
+  "options_page": "options.html"
 }
