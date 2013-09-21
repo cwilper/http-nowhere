@@ -62,13 +62,21 @@ body {
 }
 
 .options-bottom {
-  border-top: 1px solid gray;
+  border-top: 1px solid #ccc;
   padding-top: 10px;
 }
 
-.options-bottom button {
-  float:right;
+button {
+  padding: 4px;
+  margin-bottom: 6px;
+  width: 70px;
   font-size: 14px;
+}
+
+.options-bottom button {
+  background: #ddd;
+  font-weight: bold;
+  float:right;
 }
 
 .menuitem {
