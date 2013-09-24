@@ -19,6 +19,7 @@
     }
   },
   "permissions": [
+    "storage",
     "webRequest",
     "webRequestBlocking",
     "http://*/*"

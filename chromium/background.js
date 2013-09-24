@@ -1,17 +1,66 @@
-var n = 0;
+var httpNowhere = {
 
-chrome.webRequest.onBeforeRequest.addListener(function(details) {
-  n += 1;
-  chrome.browserAction.setBadgeText({'text': n + ''});
-  var newUrl = 'https' + details.url.substring(4);
-  console.log('Redirecting to ' + newUrl);
-//  return {'redirectUrl': newUrl};
-}, {urls: ['http://*/*']}, ['blocking']);
+  init: function() {
+    chrome.webRequest.onBeforeRequest.addListener(httpNowhere.observe,
+        {urls: ['http://*/*']}, ['blocking']);
+    chrome.browserAction.setPopup({'popup':'popup.html'});
+    httpNowhere.button.updateAppearance();
+  },
 
-chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});
+  observe: function(details) {
+    if (httpNowhere.prefs.isEnabled()) {
+      httpNowhere.recent.blockCount += 1;
+      httpNowhere.button.updateAppearance();
+      var newUrl = 'https' + details.url.substring(4);
+      // return {'redirectUrl': newUrl};
+    }
+  },
 
-chrome.browserAction.setPopup({'popup':'popup.html'});
+  toggleEnabled: function() {
+    httpNowhere.prefs.setEnabled(!httpNowhere.prefs.isEnabled());
+    httpNowhere.button.updateAppearance();
+  },
 
-function say(message) {
-  console.log(message);
-}
+  showPage: function(filename) {
+    var pageUrl = chrome.extension.getURL(filename);
+    chrome.tabs.query({url: pageUrl}, function(tabs) {
+      if (tabs.length) {
+        chrome.tabs.update(tabs[0].id, {active: true});
+      } else {
+        chrome.tabs.create({url: pageUrl});
+      }
+    });
+  },
+
+  button: {
+    updateAppearance: function() {
+      chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});
+      if (httpNowhere.recent.blockCount > 0) {
+        chrome.browserAction.setBadgeText({'text': httpNowhere.recent.blockCount + ''});
+      } else {
+        chrome.browserAction.setBadgeText({'text': ''});
+      }
+    }
+  },
+
+  prefs: {
+    _enabled: true,
+
+    isEnabled: function() {
+      return httpNowhere.prefs._enabled;
+    },
+
+    // https://chrome.google.com/webstore/detail/storage-area-explorer/ocfjjjjhkpapocigimmppepjgfdecjkb
+    setEnabled: function(value) {
+      console.log('setEnabled(' + value + ')');
+      httpNowhere.prefs._enabled = value;
+      chrome.storage.local.set({'enabled': value});
+    }
+  },
+
+  recent: {
+    blockCount: 0
+  }
+};
+
+httpNowhere.init();
