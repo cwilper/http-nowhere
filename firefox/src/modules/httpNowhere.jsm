@@ -138,10 +138,10 @@ httpNowhere.button = {
     var toggleEnabledElement = httpNowhere._getWindow().document.getElementById("httpNowhere-toggleEnabled");
     if (httpNowhere.prefs.isEnabled()) {
       toggleEnabledElement.image = disabledImage;
-      toggleEnabledElement.label = "Disable HTTP Nowhere";
+      toggleEnabledElement.label = "Pause HTTP Nowhere";
     } else {
       toggleEnabledElement.image = enabledImage;
-      toggleEnabledElement.label = "Enable HTTP Nowhere";
+      toggleEnabledElement.label = "Activate HTTP Nowhere";
     }
 
     var recentlyBlockedElement = httpNowhere._getWindow().document.getElementById("httpNowhere-recently-blocked");
