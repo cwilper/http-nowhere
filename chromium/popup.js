@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   // update appearance based on current state
-  
+  var isEnabled = chrome.extension.getBack  
 
   // attach event listeners
   document.getElementById('toggle').addEventListener('click', function() {

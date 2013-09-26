@@ -1,9 +1,11 @@
 var httpNowhere = {
 
   init: function() {
+    debug('httpNowhere.init()');
     chrome.webRequest.onBeforeRequest.addListener(httpNowhere.observe,
         {urls: ['http://*/*']}, ['blocking']);
     chrome.browserAction.setPopup({'popup':'popup.html'});
+    chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});
     httpNowhere.button.updateAppearance();
   },
 
@@ -17,11 +19,13 @@ var httpNowhere = {
   },
 
   toggleEnabled: function() {
+    debug('httpNowhere.toggleEnabled()');
     httpNowhere.prefs.setEnabled(!httpNowhere.prefs.isEnabled());
     httpNowhere.button.updateAppearance();
   },
 
   showPage: function(filename) {
+    debug('httpNowhere.showPage(filename)');
     var pageUrl = chrome.extension.getURL(filename);
     chrome.tabs.query({url: pageUrl}, function(tabs) {
       if (tabs.length) {
@@ -35,10 +39,16 @@ var httpNowhere = {
 
 httpNowhere.button = {
   updateAppearance: function() {
-    chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});
-    if (httpNowhere.recent.blockCount > 0) {
-      chrome.browserAction.setBadgeText({'text': httpNowhere.recent.blockCount + ''});
+    debug('httpNowhere.button.updateAppearance()');
+    if (httpNowhere.prefs.isEnabled()) {
+      chrome.browserAction.setIcon({path: 'images/icon19-on.png'});
+      if (httpNowhere.recent.blockCount > 0) {
+        chrome.browserAction.setBadgeText({'text': httpNowhere.recent.blockCount + ''});
+      } else {
+        chrome.browserAction.setBadgeText({'text': ''});
+      }
     } else {
+      chrome.browserAction.setIcon({path: 'images/icon19-off.png'});
       chrome.browserAction.setBadgeText({'text': ''});
     }
   }
@@ -53,7 +63,7 @@ httpNowhere.prefs = {
 
   // https://chrome.google.com/webstore/detail/storage-area-explorer/ocfjjjjhkpapocigimmppepjgfdecjkb
   setEnabled: function(value) {
-    console.log('setEnabled(' + value + ')');
+    debug('httpNowhere.prefs.setEnabled(value)');
     httpNowhere.prefs._enabled = value;
     chrome.storage.local.set({'enabled': value});
   }
@@ -66,3 +76,7 @@ httpNowhere.recent = {
 };
 
 httpNowhere.init();
+
+function debug(message) {
+  console.log('DEBUG: ' + message);
+}
