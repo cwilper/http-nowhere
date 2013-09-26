@@ -122,11 +122,11 @@ httpNowhere.button = {
         } else {
           buttonElement.setAttribute('badgeLabel', httpNowhere.recent.blockCount);
         }
-        buttonElement.tooltipText = "HTTP Nowhere (Enabled)";
+        buttonElement.tooltipText = "HTTP Nowhere (Active)";
       } else {
         buttonElement.setAttribute('status', 'disabled');
         buttonElement.setAttribute('badgeLabel', '');
-        buttonElement.tooltipText = "HTTP Nowhere (Disabled)";
+        buttonElement.tooltipText = "HTTP Nowhere (Paused)";
       }
     }
   },
