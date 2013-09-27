@@ -1,17 +1,34 @@
+var httpNowhere = chrome.extension.getBackgroundPage().httpNowhere;
+
 document.addEventListener('DOMContentLoaded', function () {
+  var toggle = document.getElementById('toggle');
+  var toggleImage = document.getElementById('toggleImage');
+  var recent = document.getElementById('recent');
+  var options = document.getElementById('options');
+
   // update appearance based on current state
-  var isEnabled = chrome.extension.getBack  
+  if (httpNowhere.prefs.isEnabled()) {
+    toggleImage.setAttribute('src', 'images/icon19-off.png');
+    toggle.lastChild.textContent = ' Pause HTTP Nowhere';
+  } else {
+    toggleImage.setAttribute('src', 'images/icon19-on.png');
+    toggle.lastChild.textContent = ' Activate HTTP Nowhere';
+  }
+  recent.lastChild.textContent = ' Recently Blocked (' + httpNowhere.recent.blockCount + ')';
 
   // attach event listeners
-  document.getElementById('toggle').addEventListener('click', function() {
-    chrome.extension.getBackgroundPage().httpNowhere.toggleEnabled();
+  toggle.addEventListener('click', function() {
+    httpNowhere.toggleEnabled();
     window.close();
   });
   var showAndClose = function(e) {
-    chrome.extension.getBackgroundPage().httpNowhere.showPage(e.target.id + ".html");
+    httpNowhere.showPage(e.target.id + ".html");
     window.close();
   }
-  document.getElementById('recent').addEventListener('click', showAndClose);
-  document.getElementById('options').addEventListener('click', showAndClose);
+  recent.addEventListener('click', showAndClose);
+  options.addEventListener('click', showAndClose);
 });
 
+function debug(message) {
+  chrome.extension.getBackgroundPage().debug(message);
+}
