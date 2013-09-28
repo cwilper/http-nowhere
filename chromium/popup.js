@@ -30,5 +30,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function debug(message) {
-  chrome.extension.getBackgroundPage().debug(message);
+  chrome.extension.getBackgroundPage().debug('popup.js: ' + message);
 }
