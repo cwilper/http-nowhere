@@ -3,11 +3,17 @@ var httpNowhere = {
   init: function() {
     debug('httpNowhere.init()');
     httpNowhere.prefs.load(function() {
-      chrome.webRequest.onBeforeRequest.addListener(httpNowhere.observe,
-          {urls: ['http://*/*']}, ['blocking']);
-      chrome.browserAction.setPopup({'popup':'popup.html'});
-      chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});
-      httpNowhere.button.updateAppearance();
+      httpNowhere.rules.load(function() {
+        chrome.webRequest.onBeforeRequest.addListener(httpNowhere.observe,
+            {urls: ['http://*/*']}, ['blocking']);
+        chrome.browserAction.setPopup({'popup':'popup.html'});
+        chrome.browserAction.setBadgeBackgroundColor({'color':'#999'});
+        httpNowhere.button.updateAppearance();
+        if (httpNowhere.prefs.isFirstRun()) {
+          alert("Welcome to safer browsing with HTTP Nowhere.\n\nWhile active, all unencrypted web requests will be blocked unless you allow or redirect them.\n\nClick the red lock button to pause or configure.");
+          httpNowhere.prefs.setFirstRun(false);
+        }
+      });
     });
   },
 
@@ -69,12 +75,13 @@ httpNowhere.prefs = {
   _autoRedirect: false,
 
   // load prefs from storage, setting to default values if needed
-  load: function(callback) {
+  load: function(finishedCallback) {
     chrome.storage.local.get('prefs', function(items) {
       var prefs = items.prefs;
       if (prefs == null) {
         prefs = {};
       }
+
       // set default values if needed
       if (prefs.firstRun == null) prefs.firstRun = httpNowhere.prefs._firstRun;
       if (prefs.enabled == null) prefs.enabled = httpNowhere.prefs._enabled;
@@ -93,10 +100,10 @@ httpNowhere.prefs = {
       httpNowhere.prefs._maxRecentlyBlockedURLsPerHost = prefs.maxRecentlyBlockedURLsPerHost;
       httpNowhere.prefs._autoRedirect = prefs.autoRedirect;
 
-      // ensure all settings are persisted
+      // ensure all prefs are persisted
       httpNowhere.prefs.save();
 
-      callback();
+      finishedCallback();
     });
   },
 
@@ -186,6 +193,41 @@ httpNowhere.prefs = {
 
 httpNowhere.recent = {
   blockCount: 0
+};
+
+httpNowhere.rules = {
+  _recentRedirectUris: { },
+  allowedPatterns: [],
+  ignoredPatterns: [],
+
+  load: function(finishedCallback) {
+    chrome.storage.local.get('rules', function(items) {
+      var rules = items.rules;
+      if (rules == null) {
+        rules = {};
+      }
+      // set default values if needed
+      if (rules.allowedPatterns == null) rules.allowedPatterns = [];
+      if (rules.ignoredPatterns == null) rules.ignoredPatterns = [];
+
+      // set instance values
+      httpNowhere.rules.allowedPatterns = rules.allowedPatterns;
+      httpNowhere.rules.ignoredPatterns = rules.ignoredPatterns;
+
+      // ensure all rules are persisted
+      httpNowhere.rules.save();
+
+      finishedCallback();
+    });
+  },
+
+  save: function() {
+    var rules = {
+      allowedPatterns: httpNowhere.rules.allowedPatterns,
+      ignoredPatterns: httpNowhere.rules.ignoredPatterns
+    };
+    chrome.storage.local.set({rules: rules});
+  }
 };
 
 httpNowhere.init();
