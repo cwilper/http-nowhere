@@ -24,7 +24,7 @@ var httpNowhere = {
         httpNowhere._getWindow().document.persist('nav-bar', 'currentset');
       }
       // give a quick one-time usage message
-      Services.prompt.alert(null, "Welcome to safer browsing with HTTP Nowhere.", "While active, unencrypted web requests will be blocked unless you allow or redirect them.\n\nClick the red lock button to pause or configure.");
+      Services.prompt.alert(null, "HTTP Nowhere", "Welcome to safer browsing with HTTP Nowhere.\n\nWhile active, unencrypted web requests will be blocked unless you allow or redirect them.\n\nClick the red lock button to pause or configure.");
       httpNowhere.prefs.setFirstRun(false);
     }
     httpNowhere.button.updateAppearance();

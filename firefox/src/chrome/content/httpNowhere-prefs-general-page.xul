@@ -10,18 +10,18 @@
     Components.utils.import('resource://http-nowhere/modules/httpNowhere.jsm');
   </script>
 
-  <label class="header" value="Appearance"/>
+  <label class="header" value="Button Appearance"/>
   <vbox>
     <hbox align="center">
       <checkbox
           id="httpNowhere-prefs-flashButtonOnBlock"
-          label="Flash button yellow whenever a URL is blocked"
+          label="Flash whenever a URL is blocked"
           oncommand="httpNowhere.prefs.setFlashButtonOnBlock(this.checked)"/>
     </hbox>
     <hbox align="center">
       <checkbox
           id="httpNowhere-prefs-showBlockCountOnButton"
-          label="Show recently blocked count on button"
+          label="Show recently blocked count"
           oncommand="httpNowhere.prefs.setShowBlockCountOnButton(this.checked)"/>
     </hbox>
   </vbox>
