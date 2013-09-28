@@ -58,23 +58,42 @@ httpNowhere.button = {
   }
 };
 
+// https://chrome.google.com/webstore/detail/storage-area-explorer/ocfjjjjhkpapocigimmppepjgfdecjkb
 httpNowhere.prefs = {
+  _firstRun: true,
   _enabled: true,
+  _flashButtonOnBlock: true,
+  _showBlockCountOnButton: true,
+  _maxRecentlyBlockedHosts: 20,
+  _maxRecentlyBlockedURLsPerHost: 20,
+  _autoRedirect: false,
 
+  // load prefs from storage, setting to default values if needed
   load: function(callback) {
-    // get initial prefs (with defaults if necessary) from local storage
     chrome.storage.local.get('prefs', function(items) {
       var prefs = items.prefs;
       if (prefs == null) {
         prefs = {};
       }
-      // set default values
-      if (prefs.enabled == null) prefs.enabled = true;
+      // set default values if needed
+      if (prefs.firstRun == null) prefs.firstRun = httpNowhere.prefs._firstRun;
+      if (prefs.enabled == null) prefs.enabled = httpNowhere.prefs._enabled;
+      if (prefs.flashButtonOnBlock == null) prefs.flashButtonOnBlock = httpNowhere.prefs._flashButtonOnBlock;
+      if (prefs.showBlockCountOnButton == null) prefs.showBlockCountOnButton = httpNowhere.prefs._showBlockCountOnButton;
+      if (prefs.maxRecentlyBlockedHosts == null) prefs.maxRecentlyBlockedHosts = httpNowhere.prefs._maxRecentlyBlockedHosts;
+      if (prefs.maxRecentlyBlockedURLsPerHost == null) prefs.maxRecentlyBlockedURLsPerHost = httpNowhere.prefs._maxRecentlyBlockedURLsPerHost;
+      if (prefs.autoRedirect == null) prefs.autoRedirect = httpNowhere.prefs._autoRedirect;
 
       // set instance values
+      httpNowhere.prefs._firstRun = prefs.firstRun;
       httpNowhere.prefs._enabled = prefs.enabled;
+      httpNowhere.prefs._flashButtonOnBlock = prefs.flashButtonOnBlock;
+      httpNowhere.prefs._showBlockCountOnButton = prefs.showBlockCountOnButton;
+      httpNowhere.prefs._maxRecentlyBlockedHosts = prefs.maxRecentlyBlockedHosts;
+      httpNowhere.prefs._maxRecentlyBlockedURLsPerHost = prefs.maxRecentlyBlockedURLsPerHost;
+      httpNowhere.prefs._autoRedirect = prefs.autoRedirect;
 
-      // save in case we set some default values
+      // ensure all settings are persisted
       httpNowhere.prefs.save();
 
       callback();
@@ -83,7 +102,13 @@ httpNowhere.prefs = {
 
   save: function() {
     var prefs = {
-      enabled: httpNowhere.prefs._enabled
+      firstRun: httpNowhere.prefs._firstRun,
+      enabled: httpNowhere.prefs._enabled,
+      flashButtonOnBlock: httpNowhere.prefs._flashButtonOnBlock,
+      showBlockCountOnButton: httpNowhere.prefs._showBlockCountOnButton,
+      maxRecentlyBlockedHosts: httpNowhere.prefs._maxRecentlyBlockedHosts,
+      maxRecentlyBlockedURLsPerHost: httpNowhere.prefs._maxRecentlyBlockedURLsPerHost,
+      autoRedirect: httpNowhere.prefs._autoRedirect
     };
     chrome.storage.local.set({prefs: prefs});
   },
@@ -92,10 +117,69 @@ httpNowhere.prefs = {
     return httpNowhere.prefs._enabled;
   },
 
-  // https://chrome.google.com/webstore/detail/storage-area-explorer/ocfjjjjhkpapocigimmppepjgfdecjkb
   setEnabled: function(value) {
     debug('httpNowhere.prefs.setEnabled(' + value + ')');
     httpNowhere.prefs._enabled = value;
+    httpNowhere.prefs.save();
+  },
+
+  isFirstRun: function() {
+    return httpNowhere.prefs._firstRun;
+  },
+
+  setFirstRun: function(value) {
+    debug('httpNowhere.prefs.setFirstRun(' + value + ')');
+    httpNowhere.prefs._firstRun = value;
+    httpNowhere.prefs.save();
+  },
+
+  getFlashButtonOnBlock: function() {
+    return httpNowhere.prefs._flashButtonOnBlock;
+  },
+
+  setFlashButtonOnBlock: function(value) {
+    debug('httpNowhere.prefs.setFlashButtonOnBlock(' + value + ')');
+    httpNowhere.prefs._flashButtonOnBlock = value;
+    httpNowhere.prefs.save();
+  },
+
+  getShowBlockCountOnButton: function() {
+    return httpNowhere.prefs._showBlockCountOnButton;
+  },
+
+  setShowBlockCountOnButton: function(value) {
+    debug('httpNowhere.prefs.setShowBlockCountOnButton(' + value + ')');
+    httpNowhere.prefs._showBlockCountOnButton = value;
+    httpNowhere.prefs.save();
+  },
+
+  getMaxRecentlyBlockedHosts: function() {
+    return httpNowhere.prefs._maxRecentlyBlockedHosts;
+  },
+
+  setMaxRecentlyBlockedHosts: function(value) {
+    debug('httpNowhere.prefs.setMaxRecentlyBlockedHosts(' + value + ')');
+    httpNowhere.prefs._maxRecentlyBlockedHosts = value;
+    httpNowhere.prefs.save();
+  },
+
+  getMaxRecentlyBlockedURLsPerHost: function() {
+    return httpNowhere.prefs._maxRecentlyBlockedURLsPerHost;
+  },
+
+  setMaxRecentlyBlockedURLsPerHost: function(value) {
+    debug('httpNowhere.prefs.setMaxRecentlyBlockedURLsPerHost(' + value + ')');
+    httpNowhere.prefs._maxRecentlyBlockedURLsPerHost = value;
+    httpNowhere.prefs.save();
+  },
+
+  getAutoRedirect: function() {
+    return httpNowhere.prefs._autoRedirect;
+  },
+
+  setAutoRedirect: function(value) {
+    debug('httpNowhere.prefs.setAutoRedirect(' + value + ')');
+    httpNowhere.prefs._autoRedirect = value;
     httpNowhere.prefs.save();
   }
 };
