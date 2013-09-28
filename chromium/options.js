@@ -48,8 +48,49 @@ function dialogClosed() {
   window.close();
 }
 
+function initIntegerControl(id, minValue, maxValue, getter, setter) {
+  var element = document.getElementById(id);
+  element.value = getter();
+  element.addEventListener('change', function() {
+    if (!((element.value+"").match(/^\d+$/))) {
+      element.value = getter();
+      return;
+    } else if (element.value < minValue) {
+      element.value = minValue;
+    } else if (element.value > maxValue) {
+      element.value = maxValue;
+    }
+    setter(element.value);
+  });
+}
+
+function initBooleanControl(id, getter, setter) {
+  var element = document.getElementById(id);
+  element.checked = getter();
+  element.addEventListener('change', function() {
+    setter(element.checked);
+  });
+}
+
 function generalPageLoaded() {
   debug('generalPageLoaded()');
+
+  // set values from prefs and attach event listeners to handle changes
+  initIntegerControl('maxRecentlyBlockedHosts', 0, 99,
+      httpNowhere.prefs.getMaxRecentlyBlockedHosts,
+      httpNowhere.prefs.setMaxRecentlyBlockedHosts);
+  initIntegerControl('maxRecentlyBlockedURLsPerHost', 1, 99,
+      httpNowhere.prefs.getMaxRecentlyBlockedURLsPerHost,
+      httpNowhere.prefs.setMaxRecentlyBlockedURLsPerHost);
+  initBooleanControl('flashButtonOnBlock',
+      httpNowhere.prefs.getFlashButtonOnBlock,
+      httpNowhere.prefs.setFlashButtonOnBlock);
+  initBooleanControl('showBlockCountOnButton',
+      httpNowhere.prefs.getShowBlockCountOnButton,
+      httpNowhere.prefs.setShowBlockCountOnButton);
+  initBooleanControl('autoRedirect',
+      httpNowhere.prefs.getAutoRedirect,
+      httpNowhere.prefs.setAutoRedirect);
 }
 
 function allowedPageLoaded() {

@@ -159,7 +159,7 @@ httpNowhere.prefs = {
 
   setMaxRecentlyBlockedHosts: function(value) {
     debug('httpNowhere.prefs.setMaxRecentlyBlockedHosts(' + value + ')');
-    httpNowhere.prefs._maxRecentlyBlockedHosts = value;
+    httpNowhere.prefs._maxRecentlyBlockedHosts = +value;
     httpNowhere.prefs.save();
   },
 
@@ -169,7 +169,7 @@ httpNowhere.prefs = {
 
   setMaxRecentlyBlockedURLsPerHost: function(value) {
     debug('httpNowhere.prefs.setMaxRecentlyBlockedURLsPerHost(' + value + ')');
-    httpNowhere.prefs._maxRecentlyBlockedURLsPerHost = value;
+    httpNowhere.prefs._maxRecentlyBlockedURLsPerHost = +value;
     httpNowhere.prefs.save();
   },
 
