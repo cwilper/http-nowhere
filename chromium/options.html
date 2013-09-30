@@ -56,35 +56,43 @@
           </div>
         </div>
         <div class="options-bottom">
-          <button class="closeButton">Done</button>
+          <button class="doneButton">Done</button>
         </div>
       </div>
       <div id="allowedPane" class="options-pane">
         <div class="options-section">
           <div class="options-section-title">These will never be blocked or redirected</div>
-          <div style="float: left; margin-right: 10px; margin-bottom: 10px;">
-            <select size="23" style="background: #eee; overflow: hidden; font-size: 14px; padding: 3px; max-width: 530px; text-overflow: ellipsis;">
-              <option>This is a really long string. I'm using it to test the sizing. Hopefully I can get it to work someday.</option>
-              <option>Two</option>
-              <option>Three</option>
-            </select>
+          <div class="urllist-container">
+            <select id="allowedList" class="urllist" size="23" list="allowed">
+            </select><br>
+            (* anywhere matches any value)
           </div>
-          <div style="float: right;">
-            <button>Add</button><br>
-            <button>Edit</button><br>
-            <button>Delete</button>
+          <div class="urllist-control">
+            <button class="addButton" list="allowed">Add</button><br>
+            <button class="editButton" list="allowed">Edit</button><br>
+            <button class="deleteButton" list="allowed">Delete</button>
           </div>
         </div>
-        <div class="options-bottom" style="clear: both;">
-          <button class="closeButton">Done</button>
+        <div class="options-bottom">
+          <button class="doneButton">Done</button>
         </div>
       </div>
       <div id="ignoredPane" class="options-pane">
         <div class="options-section">
           <div class="options-section-title">These will never be requested or show up under Recently Blocked</div>
+          <div class="urllist-container">
+            <select id="ignoredList" class="urllist" size="23" list="ignored">
+            </select><br>
+            (* anywhere matches any value)
+          </div>
+          <div class="urllist-control">
+            <button class="addButton" list="ignored">Add</button><br>
+            <button class="editButton" list="ignored">Edit</button><br>
+            <button class="deleteButton" list="ignored">Delete</button>
+          </div>
         </div>
         <div class="options-bottom">
-          <button class="closeButton">Done</button>
+          <button class="doneButton">Done</button>
         </div>
       </div>
     </div>

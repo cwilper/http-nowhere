@@ -65,6 +65,11 @@ body {
 .options-bottom {
   border-top: 1px solid #ccc;
   padding-top: 10px;
+  clear:both;
+}
+
+.options-bottom button {
+  float:right;
 }
 
 button {
@@ -72,10 +77,6 @@ button {
   margin-bottom: 6px;
   width: 70px;
   font-size: 14px;
-}
-
-.options-bottom button {
-  float:right;
 }
 
 .menuitem {
@@ -111,3 +112,23 @@ button {
   width: 16px;
   vertical-align: top;
 }
+
+.urllist-container {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.urllist-control {
+  float: right;
+}
+
+.urllist {
+  background: #eee;
+  overflow: hidden;
+  font-size: 14px;
+  padding: 3px;
+  width: 530px;
+  text-overflow: ellipsis;
+}
+
