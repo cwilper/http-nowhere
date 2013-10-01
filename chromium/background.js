@@ -42,6 +42,14 @@ var httpNowhere = {
         chrome.tabs.create({url: pageUrl});
       }
     });
+  },
+
+  promptForPattern: function(title, suggest) {
+    title += '\n\nFormat is host/path or host:port/path\n\n(* anywhere matches any value)';
+    if (!suggest) {
+      suggest = 'host:port/path';
+    }
+    return prompt(title, suggest);
   }
 };
 

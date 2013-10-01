@@ -158,6 +158,20 @@ function ignoredPageLoaded() {
 
 function clickedAdd(list) {
   debug('clickedAdd(' + list + ')');
+  var pattern = httpNowhere.promptForPattern('Enter ' + list + ' URL(s)');
+  if (pattern != null) {
+    var patterns;
+    if (list == 'allowed') {
+      patterns = httpNowhere.rules.allowedPatterns;
+    } else if (list == 'ignored') {
+      patterns = httpNowhere.rules.ignoredPatterns;
+    }
+    if (patterns.indexOf(pattern) == -1) {
+      patterns.push(pattern);
+      httpNowhere.rules.save();
+    }
+    initUrlPatternListControl(list, patterns);
+  }
 }
 
 function clickedEdit(list) {
