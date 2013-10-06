@@ -158,14 +158,9 @@ function ignoredPageLoaded() {
 
 function clickedAdd(list) {
   debug('clickedAdd(' + list + ')');
-  var pattern = httpNowhere.promptForPattern('Enter ' + list + ' URL(s)');
+  var pattern = httpNowhere.promptForPattern('Add ' + httpNowhere.capitalize(list) + ' URL(s)');
   if (pattern != null) {
-    var patterns;
-    if (list == 'allowed') {
-      patterns = httpNowhere.rules.allowedPatterns;
-    } else if (list == 'ignored') {
-      patterns = httpNowhere.rules.ignoredPatterns;
-    }
+    var patterns = httpNowhere.rules.getPatterns(list);
     if (patterns.indexOf(pattern) == -1) {
       patterns.push(pattern);
       httpNowhere.rules.save();
@@ -176,10 +171,39 @@ function clickedAdd(list) {
 
 function clickedEdit(list) {
   debug('clickedEdit(' + list + ')');
+  var oldPattern = document.getElementById(list + 'List').selectedOptions[0].value;
+  var pattern = httpNowhere.promptForPattern('Edit ' + httpNowhere.capitalize(list) + ' URL(s)', oldPattern);
+  if (pattern != null) {
+    var patterns = httpNowhere.rules.getPatterns(list);
+    for (var i = 0; i < patterns.length; i++) {
+      if (patterns[i] === oldPattern) {
+        patterns[i] = pattern;
+      }
+    }
+    httpNowhere.rules.save();
+    initUrlPatternListControl(list, patterns);
+  }
 }
 
 function clickedDelete(list) {
   debug('clickedDelete(' + list + ')');
+  var oldPattern = document.getElementById(list + 'List').selectedOptions[0].value;
+  if (confirm('Delete ' + httpNowhere.capitalize(list) + ' URL?\n\n' + oldPattern + '\n\nThis URL will no longer be ' + list + '.')) {
+    var patterns = httpNowhere.rules.getPatterns(list);
+    var newArray = new Array();
+    for (var i = 0; i < patterns.length; i++) {
+      if (patterns[i] != oldPattern) {
+        newArray.push(patterns[i]);
+      }
+    }
+    if (list === 'allowed') {
+      httpNowhere.rules.allowedPatterns = newArray;
+    } else if (list === 'ignored') {
+      httpNowhere.rules.ignoredPatterns = newArray;
+    }
+    httpNowhere.rules.save();
+    initUrlPatternListControl(list, newArray);
+  }
 }
 
 function debug(message) {

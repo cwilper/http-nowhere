@@ -45,11 +45,54 @@ var httpNowhere = {
   },
 
   promptForPattern: function(title, suggest) {
-    title += '\n\nFormat is host/path or host:port/path\n\n(* anywhere matches any value)';
+    var message = title + '\n\n(* anywhere matches any value)';
     if (!suggest) {
       suggest = 'host:port/path';
     }
-    return prompt(title, suggest);
+    var userpattern = prompt(message, suggest);
+    if (userpattern == null) {
+      return null;
+    }
+    userpattern = userpattern.trim();
+    var pattern = userpattern;
+    if (pattern.length == 0 || pattern === 'host:port/path') {
+      return httpNowhere.promptForPattern(title, suggest);
+    }
+    if (pattern.indexOf("http://") != 0) {
+      pattern = "http://" + pattern;
+    }
+    var j = pattern.indexOf('/');
+    var afterScheme = pattern.substr(j + 2);
+    j = afterScheme.indexOf('/');
+    if (j < 0) {
+      afterScheme = afterScheme + '/';
+      j = afterScheme.indexOf('/');
+    }
+    // http:///
+    var hostPort = afterScheme.substr(0, j).split(':');
+    if (hostPort.length > 2) {
+      alert("Too many colons in host:port");
+      return httpNowhere.promptForPattern(title, userpattern);
+    }
+    var host = hostPort[0].trim();
+    if (host.length == 0) {
+      alert("No host specified");
+      return httpNowhere.promptForPattern(title, userpattern);
+    }
+    var port = '80';
+    if (hostPort.length == 2) {
+      port = hostPort[1].trim();
+      if (port.length == 0) {
+        port = '80';
+      }
+    }
+    var path = afterScheme.substr(j);
+
+    return 'http://' + host + ":" + port + path;
+  },
+
+  capitalize: function(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
   }
 };
 
@@ -207,6 +250,14 @@ httpNowhere.rules = {
   _recentRedirectUris: { },
   allowedPatterns: [],
   ignoredPatterns: [],
+
+  getPatterns: function(list) {
+    if (list == 'allowed') {
+      return httpNowhere.rules.allowedPatterns;
+    } else if (list == 'ignored') {
+      return httpNowhere.rules.ignoredPatterns;
+    }
+  },
 
   load: function(finishedCallback) {
     chrome.storage.local.get('rules', function(items) {
