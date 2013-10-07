@@ -100,11 +100,14 @@ function initIntegerControl(id, minValue, maxValue, getter, setter) {
   });
 }
 
-function initBooleanControl(id, getter, setter) {
+function initBooleanControl(id, getter, setter, afterset) {
   var element = document.getElementById(id);
   element.checked = getter();
   element.addEventListener('change', function() {
     setter(element.checked);
+    if (afterset) {
+      afterset();
+    }
   });
 }
 
@@ -140,7 +143,8 @@ function generalPageLoaded() {
       httpNowhere.prefs.setFlashButtonOnBlock);
   initBooleanControl('showBlockCountOnButton',
       httpNowhere.prefs.getShowBlockCountOnButton,
-      httpNowhere.prefs.setShowBlockCountOnButton);
+      httpNowhere.prefs.setShowBlockCountOnButton,
+      httpNowhere.button.updateAppearance);
   initBooleanControl('autoRedirect',
       httpNowhere.prefs.getAutoRedirect,
       httpNowhere.prefs.setAutoRedirect);

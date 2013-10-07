@@ -28,10 +28,21 @@ var httpNowhere = {
         if (redirectUri != null) {
           return { redirectUrl: redirectUri };
         }
-        // TODO: signal that a block has occurred by briefly changing the button
-        // TODO: add to ignored list
-        httpNowhere.recent.blockCount += 1;
-        httpNowhere.button.updateAppearance();
+        // signal that a block has occurred by briefly changing the button
+        if (!httpNowhere.button.blocking) {
+          if (httpNowhere.prefs.getFlashButtonOnBlock()) {
+            httpNowhere.button.blocking = true;
+            chrome.browserAction.setIcon({path: 'images/icon19-blocking.png'});
+            setTimeout(function() {
+              httpNowhere.button.blocking = false;
+              httpNowhere.button.updateAppearance();
+            }, 500);
+          } else {
+            setTimeout(httpNowhere.button.updateAppearance, 0);
+          }
+        }
+        // update the recent list
+        httpNowhere.recent.addURI(httpNowhere.parseUri(details.url));
         debug('Blocked (not ignored): ' + details.url);
         return { cancel: true };
       }
@@ -81,8 +92,7 @@ var httpNowhere = {
     return normalizedPattern;
   },
 
-  // get a version of the given http uri with a port specified, or null
-  normalizeUri: function(uri) {
+  parseUri: function(uri) {
     var j = uri.indexOf('/');
     var afterScheme = uri.substr(j + 2);
     j = afterScheme.indexOf('/');
@@ -108,7 +118,20 @@ var httpNowhere = {
     }
     var path = afterScheme.substr(j);
 
-    return 'http://' + host + ":" + port + path;
+    var spec = 'http://' + host;
+    if (port != '80') {
+      spec += ':' + port;
+    }
+    spec += path;
+
+    return { host: host, port: port, path: path, spec: spec };
+  },
+
+  // get a version of the given http uri with a port specified, or null
+  normalizeUri: function(uri) {
+    var u = httpNowhere.parseUri(uri);
+    if (u == null) return null;
+    return 'http://' + u.host + ":" + u.port + u.path;
   },
 
   capitalize: function(s) {
@@ -117,12 +140,14 @@ var httpNowhere = {
 };
 
 httpNowhere.button = {
+  blocking: false,
+
   updateAppearance: function() {
     debug('httpNowhere.button.updateAppearance()');
     if (httpNowhere.prefs.isEnabled()) {
       chrome.browserAction.setIcon({path: 'images/icon19-on.png'});
       chrome.browserAction.setTitle({title: 'HTTP Nowhere (Active)'});
-      if (httpNowhere.recent.blockCount > 0) {
+      if (httpNowhere.recent.blockCount > 0 && httpNowhere.prefs.getShowBlockCountOnButton()) {
         chrome.browserAction.setBadgeText({text: httpNowhere.recent.blockCount + ''});
       } else {
         chrome.browserAction.setBadgeText({text: ''});
@@ -263,7 +288,108 @@ httpNowhere.prefs = {
 };
 
 httpNowhere.recent = {
-  blockCount: 0
+
+  hostInfo: {},
+
+  blockCount: 0,
+
+  clear: function() {
+    httpNowhere.recent.hostInfo = {};
+    httpNowhere.recent.blockCount = 0;
+  },
+
+  addURI: function(uri) {
+    var now = new Date().getTime();
+
+    // update hostInfo as appropriate
+    var hostInfo = httpNowhere.recent.hostInfo[uri.host];
+    if (hostInfo == null) {
+      // add new host to the recent hostInfo list
+      hostInfo = {
+        blockCount: 0,
+        urlInfo: {}
+      };
+      httpNowhere.recent.hostInfo[uri.host] = hostInfo;
+    }
+    hostInfo.blockCount += 1;
+    hostInfo.lastBlockedDate = now;
+    httpNowhere.recent.dropOldHostInfo();
+
+    // update hostInfo.urlInfo as appropriate
+    var urlInfo = hostInfo.urlInfo[uri.spec];
+    if (urlInfo == null) {
+      urlInfo = {
+        blockCount: 0
+      };
+      hostInfo.urlInfo[uri.spec] = urlInfo;
+    }
+    urlInfo.blockCount += 1;
+    urlInfo.lastBlockedDate = now;
+    httpNowhere.recent.dropOldUrlInfo(hostInfo);
+
+    httpNowhere.recent.recalculateBlockCount();
+  },
+
+  dropOldHostInfo: function() {
+    while (Object.keys(httpNowhere.recent.hostInfo).length > httpNowhere.prefs.getMaxRecentlyBlockedHosts()) {
+      // delete the hostInfo with the oldest blocked date
+      var orderedHostnames = httpNowhere.recent.getKeysOrderedByLastBlockedDate(httpNowhere.recent.hostInfo);
+      delete httpNowhere.recent.hostInfo[orderedHostnames[orderedHostnames.length - 1]];
+    }
+  },
+
+  dropOldUrlInfo: function(hostInfo) {
+    while (Object.keys(hostInfo.urlInfo).length > httpNowhere.prefs.getMaxRecentlyBlockedURLsPerHost()) {
+      // delete the urlInfo with the oldest blocked date
+      var orderedUrls = httpNowhere.recent.getKeysOrderedByLastBlockedDate(hostInfo.urlInfo);
+      var oldUrlInfo = hostInfo.urlInfo[orderedUrls[orderedUrls.length - 1]];
+      delete hostInfo.urlInfo[orderedUrls[orderedUrls.length - 1]];
+      // recalculate the block count for this hostInfo
+      hostInfo.blockCount -= oldUrlInfo.blockCount;
+    }
+  },
+
+  recalculateBlockCount: function() {
+    var blockCount = 0;
+    for (var hostname in httpNowhere.recent.hostInfo) {
+      blockCount += httpNowhere.recent.hostInfo[hostname].blockCount;
+    }
+    httpNowhere.recent.blockCount = blockCount;
+  },
+
+  refresh: function() {
+    // remove all urls that match any allowed or ignored urls
+    for (var hostname in httpNowhere.recent.hostInfo) {
+      var hostInfo = httpNowhere.recent.hostInfo[hostname];
+      for (var url in hostInfo.urlInfo) {
+        // remove this urlInfo from this hostInfo if it's no longer blocked
+        var uri = Services.io.newURI(url, null, null);
+        if (httpNowhere.rules.isAllowed(uri) || httpNowhere.rules.isIgnored(uri)) {
+          var oldUrlInfo = hostInfo.urlInfo[url];
+          delete hostInfo.urlInfo[url];
+          hostInfo.blockCount -= oldUrlInfo.blockCount;
+        }
+      }
+      if (Object.keys(hostInfo.urlInfo).length == 0) {
+        // remove hostInfo if no more urlInfo for it
+        delete httpNowhere.recent.hostInfo[hostname];
+      }
+      httpNowhere.recent.recalculateBlockCount();
+    }
+
+    // remove oldest urlinfo and hostinfo if needed to fit within maximums
+    httpNowhere.recent.dropOldHostInfo();
+    for (var hostname in httpNowhere.recent.hostInfo) {
+      httpNowhere.recent.dropOldUrlInfo(httpNowhere.recent.hostInfo[hostname]);
+    }
+    httpNowhere.recent.recalculateBlockCount();
+  },
+
+  getKeysOrderedByLastBlockedDate: function(info) {
+    return Object.keys(info).sort(function(a, b) {
+      return info[b].lastBlockedDate - info[a].lastBlockedDate;
+    });
+  }
 };
 
 httpNowhere.rules = {
