@@ -19,10 +19,22 @@ var httpNowhere = {
 
   observe: function(details) {
     if (httpNowhere.prefs.isEnabled()) {
-      httpNowhere.recent.blockCount += 1;
-      httpNowhere.button.updateAppearance();
-      var newUrl = 'https' + details.url.substring(4);
-      // return {'redirectUrl': newUrl};
+      if (!httpNowhere.rules.isAllowed(details.url)) {
+        if (httpNowhere.rules.isIgnored(details.url)) {
+          debug('Blocked (ignored): ' + details.url);
+          return { cancel: true };
+        }
+        var redirectUri = httpNowhere.rules.getRedirectUri(details.url);
+        if (redirectUri != null) {
+          return { redirectUrl: redirectUri };
+        }
+        // TODO: signal that a block has occurred by briefly changing the button
+        // TODO: add to ignored list
+        httpNowhere.recent.blockCount += 1;
+        httpNowhere.button.updateAppearance();
+        debug('Blocked (not ignored): ' + details.url);
+        return { cancel: true };
+      }
     }
   },
 
@@ -61,8 +73,18 @@ var httpNowhere = {
     if (pattern.indexOf("http://") != 0) {
       pattern = "http://" + pattern;
     }
-    var j = pattern.indexOf('/');
-    var afterScheme = pattern.substr(j + 2);
+
+    var normalizedPattern = httpNowhere.normalizeUri(pattern);
+    if (normalizedPattern == null) {
+      return httpNowhere.promptForPattern(title, userpattern);
+    }
+    return normalizedPattern;
+  },
+
+  // get a version of the given http uri with a port specified, or null
+  normalizeUri: function(uri) {
+    var j = uri.indexOf('/');
+    var afterScheme = uri.substr(j + 2);
     j = afterScheme.indexOf('/');
     if (j < 0) {
       afterScheme = afterScheme + '/';
@@ -71,13 +93,11 @@ var httpNowhere = {
     // http:///
     var hostPort = afterScheme.substr(0, j).split(':');
     if (hostPort.length > 2) {
-      alert("Too many colons in host:port");
-      return httpNowhere.promptForPattern(title, userpattern);
+      return null;
     }
     var host = hostPort[0].trim();
     if (host.length == 0) {
-      alert("No host specified");
-      return httpNowhere.promptForPattern(title, userpattern);
+      return null;
     }
     var port = '80';
     if (hostPort.length == 2) {
@@ -286,6 +306,49 @@ httpNowhere.rules = {
       ignoredPatterns: httpNowhere.rules.ignoredPatterns
     };
     chrome.storage.local.set({rules: rules});
+  },
+
+  isAllowed: function(uri) {
+    return uri.indexOf('https://') == 0 || httpNowhere.rules._matchesAny(uri, httpNowhere.rules.allowedPatterns);
+  },
+
+  isIgnored: function(uri) {
+    return httpNowhere.rules._matchesAny(uri, httpNowhere.rules.ignoredPatterns);
+  },
+
+  getRedirectUri: function(uri) {
+    if (uri.indexOf('http://') != 0) return null;
+
+    // TODO: complete
+    if (httpNowhere.prefs.getAutoRedirect()) {
+      return 'https' + uri.substring(4);
+    }
+    return null;
+  },
+
+  _matchesAny: function(uri, patterns) {
+    for (var i = 0; i < patterns.length; i++) {
+      if (httpNowhere.rules._matches(uri, patterns[i])) {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  _matches: function(uri, pattern) {
+    var regExp;
+    if (pattern.indexOf('~') == 0) {
+      regExp = new RegExp(pattern);
+    } else {
+      regExp = httpNowhere.rules._patternToRegExp(pattern);
+    }
+
+    return regExp.test(httpNowhere.normalizeUri(uri));
+  },
+
+  _patternToRegExp: function(pattern) {
+    var re = '^' + pattern.replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*+/g, '.*') + '$';
+    return new RegExp(re);
   }
 };
 
