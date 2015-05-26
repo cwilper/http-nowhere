@@ -45,7 +45,9 @@ var httpNowhere = {
         } else {
           var redirectUri = httpNowhere.rules.getRedirectUri(request.URI);
           if (redirectUri != null && httpNowhere.isRedirectSupported()) {
-            request.redirectTo(redirectUri);
+            if (Services.prompt.confirm(null, "Unencrypted Site !", "HTTP Request\nUnencrypted site detected, would you like to try redirect it to https ?")) {
+				      request.redirectTo(redirectUri);
+			      }
           } else {
             request.cancel(Components.results.NS_ERROR_ABORT);
             // signal that a block has occurred by briefly changing the button
