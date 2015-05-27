@@ -6,6 +6,8 @@ Components.utils.import("resource://gre/modules/FileUtils.jsm");
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 
+var http_tmp_allow = false;
+
 var httpNowhere = {
   _getWindow: function(id) {
     return Services.wm.getMostRecentWindow("navigator:browser");
@@ -24,9 +26,10 @@ var httpNowhere = {
         httpNowhere._getWindow().document.persist('nav-bar', 'currentset');
       }
       // give a quick one-time usage message
-      Services.prompt.alert(null, "HTTP Nowhere", "Welcome to safer browsing with HTTP Nowhere.\n\nWhile active, unencrypted web requests will be blocked unless you allow or redirect them.\n\nClick the red lock button to pause or configure.");
+      Services.prompt.alert(null, "HTTP Nowhere is now installed", "Click the lock button to disable, enable, and configure it.\n\nWhile red (enabled), unencrypted web requests will fail unless allowed explicitly.");
       httpNowhere.prefs.setFirstRun(false);
     }
+	
     httpNowhere.button.updateAppearance();
 
     // load existing rules
@@ -34,6 +37,7 @@ var httpNowhere = {
 
     // start observing all http requests
     Services.obs.addObserver(httpNowhere, "http-on-modify-request", false);
+	
   },
 
   observe: function(subject, topic, data) {
@@ -43,19 +47,32 @@ var httpNowhere = {
         if (httpNowhere.rules.isIgnored(request.URI)) {
           request.cancel(Components.results.NS_ERROR_ABORT);
         } else {
+			
+			
           var redirectUri = httpNowhere.rules.getRedirectUri(request.URI);
           if (redirectUri != null && httpNowhere.isRedirectSupported()) {
-            var origin = httpNowhere._getWindow().gURLBar.value;
+			
+			var origin = httpNowhere._getWindow().gURLBar.value;
+			
 			if (origin == (request.URI.host + request.URI.path)) {
 				if (Services.prompt.confirm(null, "Unencrypted Site !", "HTTP Request\nUnencrypted site detected, would you like to try redirect it to https ?")) {
 					request.redirectTo(redirectUri);
 				}
+				else {
+					http_tmp_allow = true;
+					setTimeout("function(){http_tmp_allow == false;}", 15000);
+				}
 			}
 			else {
-				request.redirectTo(redirectUri);
+				if (http_tmp_allow == false) {
+					request.redirectTo(redirectUri);
+				}
 			}
-          } else {
-            request.cancel(Components.results.NS_ERROR_ABORT);
+			
+            } else {
+			if (http_tmp_allow == false) {
+				request.cancel(Components.results.NS_ERROR_ABORT);
+			}
             // signal that a block has occurred by briefly changing the button
             var button = httpNowhere._getWindow().document.getElementById("httpNowhere-button");
             if (button != null) {
